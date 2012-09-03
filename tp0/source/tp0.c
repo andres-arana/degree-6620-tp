@@ -133,12 +133,38 @@ int validate_args(struct cli_args_t* args) {
   return 1;
 }
 
+/*
+ * Obtiene una referencia al FILE* de entrada a utilizar. Puede ser el archivo
+ * especificado por linea de comandos, o stdin si no se especificó ninguno.
+ * Devuelve 0 si no se puede crear un stream para el archivo especificado en
+ * args.
+ */
+FILE* open_input_stream(struct cli_args_t* args) {
+  if (args->file) {
+    return fopen(args->file, "r");
+  } else {
+    return stdin;
+  }
+}
+
+/*
+ * Cierra la referencia al stream de entrada, si es un archivo especificado por
+ * la linea de comandos.
+ */
+void close_input_stream(FILE* stream, struct cli_args_t* args) {
+  if (args->file) {
+    fclose(stream);
+  }
+}
+
 /**
  * Punto de entrada al programa
  */
 int main(int argc, char** argv) {
   /* Instancia que contiene todos los argumentos del programa */
   struct cli_args_t args;
+  /* Puntero al archivo de entrada */
+  FILE *input;
 
   /* Carga en args los argumentos de la linea de comandos */
   if (!parse_args(&args, argc, argv)) {
@@ -151,15 +177,24 @@ int main(int argc, char** argv) {
     return 1;
   }
 
+  /* Procesa la ayuda */
   if (args.help) {
     show_help();
     return 0;
   }
 
+  /* Procesa la información de versión */
   if (args.version) {
     show_version();
     return 0;
   }
+
+  if (!(input = open_input_stream(&args))) {
+    printf("Unable to open file %s\n", args.file);
+    return 1;
+  }
+
+  close_input_stream(input, &args);
 
   return 0;
 }
