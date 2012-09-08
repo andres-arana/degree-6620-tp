@@ -1,0 +1,71 @@
+Este instructivo tiene por objetivo especificar los pasos a seguir para iniciar el emulador de MIPS GXEMUl
+conectarse por ssh y transferir un archivo del host al guest y viceversa. 
+
+Paso 0)
+ Bajar e instalar GXEMul....
+
+  I) http://webs.sinectis.com.ar/lesanti/6620/   => bajar el archivo gxemul-6620.tar.bz2
+  Ib) https://www.wuala.com/cucho/Orga6620/?key=orga6620Jueves
+  II)Para descomprimirlo por línea de comandos:
+                          $> bzip2 -dc gxemul-6620.tar.bz2 | cpio --sparse -i -v
+    
+
+
+
+------------Para continuar es necesario verificar que se cuenta con SSH instalado en la máquina HOST!. --------------------
+---- Se puede ejecutar el comando apt-get install ssh, o instalarlo con synaptic, yum o el package manager que se cuente.---
+
+
+
+
+Paso 1)
+Hay que iniciar GXEmul. Por lo tanto, se debe abrir una consola, localizar el directorio donde se realizó la descompresión
+y ejecutar el comando: 
+			  $> ./gxemul -e 3max -d netbsd-pmax.img
+
+Finalmente, muestra como se inicia el sistema operativo NETBSD, terminando con el prompt que pide el usuario y password de loguin:
+			  USER: root  
+			  PASSWORD: orga6620
+
+Paso 2)
+Ahora hay que conectar el Sistema Operativo NETBSD con el OS linux HOST.. (NETBSD está corriendo emulado pero 
+hasta ahora no tiene ningún tipo de conexión con el mundo externo), por lo que, primero hay que configurar a
+donde se va a conectar. Para eso, se debe abrir una consola nueva:
+  I) Abrir una consola nueva.
+  II) Ejecutar (Aquí es necesario tener permisos de SuperUsuario (sudo, su)) 
+	      ifconfig lo:0 172.20.0.1 
+
+ Esto configura la placa de red, con esa IP para que el GXEmul se conecte ahí. (Puede ser elegida cualquier otra 
+ dirección IP válida)
+
+Ahora sí, en la consola del GXEmul, ejecutar el comando:
+			  $> ssh -R 2222:127.0.0.1:22 USER@172.20.0.1
+
+donde USER es un usuario del OS Linux Host. (Nos pide confirmar la clave del usuario)
+
+Paso 3)
+Ahora tenemos que poder acceder al OS NETBSD, entonces en la última consola abierta, ejecutar:
+                          $>ssh -P 2222 root@127.0.0.1
+
+ Aquí, pide el password del usuario root de NETBSD (orga6620)
+
+Paso 4)
+Copiar archivos de GXEmul al sistema operativo Linux Host y vice versa:
+
+  I) Para copiar del GXEmul al Linux.... 
+     Se hace desde la última consola abierta (la que quedo en el sistema NETBSD)... y se ejecuta el comando:
+                   root@:~# scp -p 2222 ARCHIVO USER@172.20.0.1:/DIRDONDEQUIEROCOPIAR
+  
+  II) Para copiar del Linux al GXEmul.....
+      Se hace de una consola de linux, y se ejecuta el comando:
+                  USER$>scp -P 2222 ARCHIVO root@127.0.0.1:/DIRDONDECOPIAR
+
+  Donde ARCHIVO, puede ser reemplazado por * (si se quiere copiar todos los archivos de un directorio) y/o otras opciones
+  para seleccionar los archivos a copiar.
+
+Claudio Carballal Abarzúa.
+
+
+
+
+
