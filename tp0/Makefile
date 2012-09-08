@@ -1,4 +1,4 @@
-RAW_DEPS = clargs.h cltext.h
+RAW_DEPS = clargs.h cltext.h data.h
 RAW_OBJ = clargs.o cltext.o tp0.o
 
 CC=gcc
