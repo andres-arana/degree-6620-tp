@@ -17,7 +17,7 @@ void show_arg_after_file(char* offending_option) {
 }
 
 /*
- * Ver documentacion en cl_args.h
+ * Ver documentacion en el header
  */
 int cl_args_parse(struct cl_args_t* args, int argc, char** argv) {
   int i;
@@ -60,7 +60,7 @@ int cl_args_parse(struct cl_args_t* args, int argc, char** argv) {
 }
 
 /*
- * Ver documentacion en cl_args.h
+ * Ver documentacion en el header
  */
 int cl_args_validate(struct cl_args_t* args) {
   if (args-> help) {

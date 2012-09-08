@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 /*
- * Ver documentacion en cl_args.h
+ * Ver documentacion en el header
  */
 void cl_text_help() {
   puts("tp0 [OPTIONS] [FILE]");
@@ -13,7 +13,7 @@ void cl_text_help() {
 }
 
 /*
- * Ver documentacion en cl_args.h
+ * Ver documentacion en el header
  */
 void cl_text_version() {
   puts("tpo 1.0.0");

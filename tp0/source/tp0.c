@@ -3,7 +3,7 @@
 #include "clargs.h"
 #include "clargs.h"
 #include "cltext.h"
-#include "clinput.h"
+#include "data.h"
 
 /**
  * Punto de entrada al programa
@@ -11,8 +11,8 @@
 int main(int argc, char** argv) {
   /* Instancia que contiene todos los argumentos del programa */
   struct cl_args_t args;
-  /* Puntero al archivo de entrada */
-  FILE *input;
+  /* Instancia que contiene todos los datos a ordenar */
+  struct data_t data;
 
   /* Carga en args los argumentos de la linea de comandos */
   if (!cl_args_parse(&args, argc, argv)) {
@@ -37,11 +37,16 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  printf("Files to process: %d\n", args.file_count);
-  int i;
-  for (i = 0; i < args.file_count; i++) {
-    printf("  %s\n", args.files[i]);
+  /* Obtiene los datos a ordenar desde la entrada correspondiente */
+  if (!data_read(&data, &args)) {
+    return 1;
   }
+
+  /* Muestra los datos por pantalla */
+  data_display(&data);
+
+  /* Cleanup */
+  data_cleanup(&data);
 
   return 0;
 }
