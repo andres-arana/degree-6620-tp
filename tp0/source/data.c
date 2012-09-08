@@ -4,18 +4,33 @@
 #include "data.h"
 
 /*
+ * Funcion auxiliar para crear una tabla de n registros
+ */
+void aux_prepare_table(struct data_t* data, unsigned int n) {
+  data->table = malloc(sizeof(char*) * n);
+  data->size = n;
+}
+
+/*
+ * Funcion auxiliar que setea el registro n a un string dado
+ */
+void aux_set_record(struct data_t* data, unsigned int n, char* record) {
+  data->table[n] = malloc(sizeof(char) * strlen(record) + 1);
+  strcpy(data->table[n], record);
+}
+
+/*
  * Ver documentacion en header
  */
 int data_read(struct data_t* data, struct cl_args_t* args) {
   data->table = 0;
   data->size = 0;
 
-  data->table = malloc(sizeof(char *) * 2);
-  data->table[0] = malloc(sizeof(char) * 5);
-  strcpy(data->table[0], "hola");
-  data->table[1] = malloc(sizeof(char) * 5);
-  strcpy(data->table[1], "chau");
-  data->size = 2;
+  aux_prepare_table(data, 4);
+  aux_set_record(data, 0, "hola");
+  aux_set_record(data, 1, "como");
+  aux_set_record(data, 2, "andas");
+  aux_set_record(data, 3, "boludo");
 }
 
 /*
