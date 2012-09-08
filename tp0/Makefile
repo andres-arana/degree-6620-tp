@@ -30,3 +30,12 @@ clean:
 	@echo ' '
 	@echo ' '
 
+virtual:
+	@echo ' '
+	@echo ' '
+	@echo '**************************************************'
+	@echo 'Starting up virtual machine'
+	@echo '**************************************************'
+	./gxemul/gxemul-6620-20070927/gxemul -e 3max -d ./gxemul/gxemul-6620-20070927/netbsd-pmax.img
+	@echo ' '
+	@echo ' '

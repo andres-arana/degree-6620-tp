@@ -31,3 +31,6 @@ El makefile también incluye una tarea `clean` para limpiar todos los resultados
 intermedios y finales de la generación de ejecutables y documentación. Se puede
 ejecutar dicha tarea a través del comando `make clean`.
 
+En lo relacionado a la administración de la máquina virtual utilizada para la
+ejecución del trabajo práctico, se incluye una tarea para levantar la instancia
+a través del comando `make virtual`.
