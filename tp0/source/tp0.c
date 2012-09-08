@@ -37,5 +37,11 @@ int main(int argc, char** argv) {
     return 0;
   }
 
+  printf("Files to process: %d\n", args.file_count);
+  int i;
+  for (i = 0; i < args.file_count; i++) {
+    printf("  %s\n", args.files[i]);
+  }
+
   return 0;
 }

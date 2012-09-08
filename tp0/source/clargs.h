@@ -28,7 +28,12 @@ struct cl_args_t {
   /*
    * Nombre del archivo a ordenar, si se ingreso alguno. 0 en caso contrario.
    */
-  char* file;
+  char** files;
+
+  /*
+   * Cantidad de archivos ingresados
+   */
+  int file_count;
 };
 
 /*
