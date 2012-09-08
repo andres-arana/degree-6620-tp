@@ -1,5 +1,5 @@
-RAW_DEPS = clargs.h cltext.h data.h
-RAW_OBJ = data.o clargs.o cltext.o tp0.o
+RAW_DEPS = clargs.h cltext.h data.h stooge.h
+RAW_OBJ = data.o clargs.o cltext.o tp0.o stooge.o
 
 CC=gcc
 CFLAGS=-I./source

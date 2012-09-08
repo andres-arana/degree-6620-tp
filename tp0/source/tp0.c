@@ -4,6 +4,7 @@
 #include "clargs.h"
 #include "cltext.h"
 #include "data.h"
+#include "stooge.h"
 
 /**
  * Punto de entrada al programa
@@ -40,6 +41,10 @@ int main(int argc, char** argv) {
   /* Obtiene los datos a ordenar desde la entrada correspondiente */
   if (!data_read(&data, &args)) {
     return 1;
+  }
+
+  if (args.stoogesort) {
+    sort_stooge(&data, 0, data.size - 1);
   }
 
   /* Muestra los datos por pantalla */
