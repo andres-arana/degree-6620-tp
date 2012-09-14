@@ -1,36 +1,131 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "data.h"
+#include "buffer.h"
+#include "config.h"
 
 /*
- * Funcion auxiliar para crear una tabla de n registros
+ * Funcion que inicializa los datos de una tabla de lineas para empezar a
+ * acumular lineas.
  */
-void aux_prepare_table(struct data_t* data, unsigned int n) {
-  data->table = malloc(sizeof(char*) * n);
-  data->size = n;
+int data_init(struct data_t* data) {
+  data->capacity = 1;
+  data->size = 0;
+  data->table = malloc(sizeof(char *) * data->capacity);
+  if (!data->table) {
+    LOG_DEBUG_STRING("Malloc on data_init returned zero");
+    LOG_ERROR_STRING("Not enough memory to initialize data buffer");
+    return 0;
+  }
+  return 1;
+}
+
+int data_pushline(struct data_t* data, char* line) {
+  /* Si hay overflow, se suman otras 512 lineas al tamaño de la tabla */
+  if (data->size >= data->capacity) {
+    char **new_table;
+
+    LOG_DEBUG_STRING("Overflow while pushing line to data buffer. Increase buffer size");
+    data->capacity += 512;
+    LOG_DEBUG_IVAR(data->capacity);
+
+    new_table = realloc(data->table, sizeof(char*) * data->capacity);
+    if (!new_table) {
+      LOG_DEBUG_STRING("Realloc on data_pushline returned zero");
+      LOG_ERROR_STRING("Not enough memory for data buffer overflow");
+      return 0;
+    }
+
+    data->table = new_table;
+  }
+
+  data->table[data->size] = line;
+  data->size++;
+  return 1;
+
 }
 
 /*
- * Funcion auxiliar que setea el registro n a un string dado
+ * Elimina la capacidad excedente para evitar ocupar memoria de mas 
  */
-void aux_set_record(struct data_t* data, unsigned int n, char* record) {
-  data->table[n] = malloc(sizeof(char) * strlen(record) + 1);
-  strcpy(data->table[n], record);
+void data_shrink(struct data_t* data) {
+  data->capacity = data->size;
+  data->table = realloc(data->table, sizeof(char*) * data->capacity);
+}
+
+/*
+ * Funcion que acumula en data los contenidos de todas las lineas del stream de
+ * entrada usando el buffer de acumulacion dado.
+ */
+int accumulate_lines(struct data_t* data, FILE* stream, struct buffer_t* buffer) {
+  int raw_char;
+  char actual_char;
+  char* new_line;
+  int result;
+
+  LOG_DEBUG_STRING("Accumulating lines");
+  for (raw_char = fgetc(stream); !feof(stream) || buffer_pending(buffer); raw_char = fgetc(stream)) {
+    actual_char = (char) raw_char;
+    if ((!feof(stream) && actual_char == '\n') || (feof(stream) && buffer_pending(buffer))) {
+      new_line = buffer_reset(buffer);
+      if (!new_line) {
+        LOG_DEBUG_STRING("Unable to reset buffer in accumulate_lines");
+        LOG_ERROR_STRING("Unable to obtain full line from buffer");
+        return 0;
+      }
+
+      result = data_pushline(data, new_line);
+      if (!result) {
+        LOG_DEBUG_STRING("Unable to push new line in accumulate_lines");
+        LOG_ERROR_STRING("Unable to push new line in data buffer");
+        return 0;
+      }
+      LOG_DEBUG_STRING("Pushed line to data buffer");
+      LOG_DEBUG_SVAR(new_line);
+    } else {
+      result = buffer_push(buffer, actual_char);
+      if (!result) {
+        LOG_DEBUG_STRING("Unable to push char into buffer in accumulate_lines");
+        LOG_ERROR_STRING("Unable to push char into line buffer");
+        return 0;
+      }
+    }
+  }
+
+  return 1;
 }
 
 /*
  * Ver documentacion en header
  */
 int data_read(struct data_t* data, struct cl_args_t* args) {
-  data->table = 0;
-  data->size = 0;
+  int result;
+  struct buffer_t buffer;
+  LOG_DEBUG_STRING("Reading data from input");
 
-  aux_prepare_table(data, 4);
-  aux_set_record(data, 0, "hola");
-  aux_set_record(data, 1, "como");
-  aux_set_record(data, 2, "andas");
-  aux_set_record(data, 3, "boludo");
+  /* Se inicializa el buffer de acumulacion de linea */
+  result = buffer_init(&buffer);
+  if (!result) {
+    LOG_DEBUG_STRING("Unable to initialize buffer on data_read");
+    LOG_ERROR_STRING("Unable to initialize line buffer");
+    return 0;
+  }
+
+  /* Se acumulan las lineas de todos los archivos */
+  /* TODO: Procesar multiples archivos */
+  result = accumulate_lines(data, stdin, &buffer);
+  if (!result) {
+    LOG_DEBUG_STRING("Unable to accumulate lines from file on data_read");
+    LOG_ERROR_STRING("Unable to accumulate lines from file");
+    buffer_cleanup(&buffer);
+    return 0;
+
+  }
+
+  /* Se limpian los recursos que no son mas necesarios */
+  buffer_cleanup(&buffer);
+  data_shrink(data);
+  return 1;
 }
 
 /*

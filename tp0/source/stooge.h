@@ -3,11 +3,9 @@
 
 #include "data.h"
 
-
 /**
- * Algoritmo de ordenamiento por método Stooge.
+ * Algoritmo de ordenamiento por metodo Stooge.
  */
 void sort_stooge(struct data_t* data, int start, int end);
-
 
 #endif

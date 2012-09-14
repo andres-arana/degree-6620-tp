@@ -3,17 +3,17 @@
 #include "clargs.h"
 
 /*
- * Imprime un mensaje de error por una opción inválida.
+ * Imprime un mensaje de error por una opcion inválida.
  */
 void show_invalid_option(char* offending_option) {
-  fprintf(stderr, "Invalid option: %s\n\n", offending_option);
+  printf("Invalid option: %s\n\n", offending_option);
 }
 
 /*
  * Imprime un mensaje de error por ingresar un flag despues de los archivos
  */
 void show_arg_after_file(char* offending_option) {
-  fprintf(stderr, "Option found after input file: %s\n\n", offending_option);
+  printf("Option found after input file: %s\n\n", offending_option);
 }
 
 /*

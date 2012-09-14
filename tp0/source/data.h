@@ -13,9 +13,14 @@ struct data_t {
   char **table;
 
   /*
-   * La cantidad de registros que hay en data_table
+   * La cantidad de registros que hay en la tabla
    */
   unsigned int size;
+
+  /*
+   * La cantidad de registros alocados para la tabla
+   */
+  unsigned int capacity;
 };
 
 /*
