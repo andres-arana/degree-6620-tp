@@ -8,7 +8,7 @@
  * Ver documentacion en header
  */
 int data_init(struct data_t* data) {
-  data->capacity = 1;
+  data->capacity = 512;
   data->size = 0;
   data->table = malloc(sizeof(char *) * data->capacity);
   if (!data->table) {
