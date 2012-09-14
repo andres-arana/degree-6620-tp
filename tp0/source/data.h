@@ -24,6 +24,12 @@ struct data_t {
 };
 
 /*
+ * Funcion que inicializa los datos de una tabla de lineas para empezar a
+ * acumular lineas.
+ */
+int data_init(struct data_t* data);
+
+/*
  * Lee los datos desde los flujos de datos correspondientes a lo especificado
  * en los argumentos
  */

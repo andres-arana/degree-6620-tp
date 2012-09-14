@@ -5,8 +5,7 @@
 #include "config.h"
 
 /*
- * Funcion que inicializa los datos de una tabla de lineas para empezar a
- * acumular lineas.
+ * Ver documentacion en header
  */
 int data_init(struct data_t* data) {
   data->capacity = 1;

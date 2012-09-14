@@ -16,15 +16,15 @@ void sort_stooge(struct data_t* data, int start, int end) {
     LOG_SORT_DEBUG_IVAR(end);
   }
 
-  char* line1 = (data->table)[start];
-  LOG_SORT_DEBUG_SVAR(line1);
-  char* line2 = (data->table)[end];
-  LOG_SORT_DEBUG_SVAR(line2);
+  LOG_SORT_DEBUG_SVAR(data->table[start]);
+  LOG_SORT_DEBUG_SVAR(data->table[end]);
 
   if (strcmp((data->table)[end], (data->table)[start]) < 0) {
+    char* temp = (data->table)[start];
+
     LOG_SORT_DEBUG("line2 should be before line1");
     (data->table)[start] = (data->table)[end];
-    (data->table)[end] = line1;
+    (data->table)[end] = temp;
   }
 
   if (end - start + 1 >= 3) {
