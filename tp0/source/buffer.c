@@ -11,8 +11,8 @@ int buffer_init(struct buffer_t* buffer) {
   buffer->current = 0;
   buffer->buffer = malloc(sizeof(char) * buffer->size);
   if (!buffer->buffer) {
-    LOG_DEBUG_STRING("Malloc on buffer_init returned zero");
-    LOG_ERROR_STRING("Not enough memory to initialize line buffer");
+    LOG_DATA_DEBUG("Malloc on buffer_init returned zero");
+    LOG_ERROR("Not enough memory to initialize line buffer");
     return 0;
   }
   return 1;
@@ -26,14 +26,14 @@ int buffer_push(struct buffer_t* buffer, char c) {
   if (buffer->current >= buffer->size) {
     char* new_buffer;
 
-    LOG_DEBUG_STRING("Overflow while pushing char to buffer. Increase buffer size");
+    LOG_DATA_DEBUG("Overflow while pushing char to buffer. Increase buffer size");
     buffer->size += 32;
-    LOG_DEBUG_IVAR(buffer->size);
+    LOG_DATA_DEBUG_IVAR(buffer->size);
 
     new_buffer = realloc(buffer->buffer, sizeof(char) * buffer->size);
     if (!new_buffer) {
-      LOG_DEBUG_STRING("Realloc on buffer_push returned zero");
-      LOG_ERROR_STRING("Not enough memory for line buffer overflow");
+      LOG_DATA_DEBUG("Realloc on buffer_push returned zero");
+      LOG_ERROR("Not enough memory for line buffer overflow");
       return 0;
     }
 
@@ -55,8 +55,8 @@ char* buffer_reset(struct buffer_t* buffer) {
   /* Se alloca y se copia lo que hay en el buffer hasta el momento */
   result = malloc(sizeof(char) * buffer->current + 1);
   if (!result) {
-    LOG_DEBUG_STRING("Malloc on buffer_reset returned zero");
-    LOG_ERROR_STRING("Not enough memory for line buffer reset");
+    LOG_DATA_DEBUG("Malloc on buffer_reset returned zero");
+    LOG_ERROR("Not enough memory for line buffer reset");
     return 0;
   }
   for (i = 0; i < buffer->current; i++) {

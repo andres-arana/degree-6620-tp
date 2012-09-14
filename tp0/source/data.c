@@ -13,8 +13,8 @@ int data_init(struct data_t* data) {
   data->size = 0;
   data->table = malloc(sizeof(char *) * data->capacity);
   if (!data->table) {
-    LOG_DEBUG_STRING("Malloc on data_init returned zero");
-    LOG_ERROR_STRING("Not enough memory to initialize data buffer");
+    LOG_DATA_DEBUG("Malloc on data_init returned zero");
+    LOG_ERROR("Not enough memory to initialize data buffer");
     return 0;
   }
   return 1;
@@ -25,14 +25,14 @@ int data_pushline(struct data_t* data, char* line) {
   if (data->size >= data->capacity) {
     char **new_table;
 
-    LOG_DEBUG_STRING("Overflow while pushing line to data buffer. Increase buffer size");
+    LOG_DATA_DEBUG("Overflow while pushing line to data buffer. Increase buffer size");
     data->capacity += 512;
-    LOG_DEBUG_IVAR(data->capacity);
+    LOG_DATA_DEBUG_IVAR(data->capacity);
 
     new_table = realloc(data->table, sizeof(char*) * data->capacity);
     if (!new_table) {
-      LOG_DEBUG_STRING("Realloc on data_pushline returned zero");
-      LOG_ERROR_STRING("Not enough memory for data buffer overflow");
+      LOG_DATA_DEBUG("Realloc on data_pushline returned zero");
+      LOG_ERROR("Not enough memory for data buffer overflow");
       return 0;
     }
 
@@ -63,30 +63,30 @@ int accumulate_lines(struct data_t* data, FILE* stream, struct buffer_t* buffer)
   char* new_line;
   int result;
 
-  LOG_DEBUG_STRING("Accumulating lines");
+  LOG_DATA_DEBUG("Accumulating lines");
   for (raw_char = fgetc(stream); !feof(stream) || buffer_pending(buffer); raw_char = fgetc(stream)) {
     actual_char = (char) raw_char;
     if ((!feof(stream) && actual_char == '\n') || (feof(stream) && buffer_pending(buffer))) {
       new_line = buffer_reset(buffer);
       if (!new_line) {
-        LOG_DEBUG_STRING("Unable to reset buffer in accumulate_lines");
-        LOG_ERROR_STRING("Unable to obtain full line from buffer");
+        LOG_DATA_DEBUG("Unable to reset buffer in accumulate_lines");
+        LOG_ERROR("Unable to obtain full line from buffer");
         return 0;
       }
 
       result = data_pushline(data, new_line);
       if (!result) {
-        LOG_DEBUG_STRING("Unable to push new line in accumulate_lines");
-        LOG_ERROR_STRING("Unable to push new line in data buffer");
+        LOG_DATA_DEBUG("Unable to push new line in accumulate_lines");
+        LOG_ERROR("Unable to push new line in data buffer");
         return 0;
       }
-      LOG_DEBUG_STRING("Pushed line to data buffer");
-      LOG_DEBUG_SVAR(new_line);
+      LOG_DATA_DEBUG("Pushed line to data buffer");
+      LOG_DATA_DEBUG_SVAR(new_line);
     } else {
       result = buffer_push(buffer, actual_char);
       if (!result) {
-        LOG_DEBUG_STRING("Unable to push char into buffer in accumulate_lines");
-        LOG_ERROR_STRING("Unable to push char into line buffer");
+        LOG_DATA_DEBUG("Unable to push char into buffer in accumulate_lines");
+        LOG_ERROR("Unable to push char into line buffer");
         return 0;
       }
     }
@@ -101,25 +101,51 @@ int accumulate_lines(struct data_t* data, FILE* stream, struct buffer_t* buffer)
 int data_read(struct data_t* data, struct cl_args_t* args) {
   int result;
   struct buffer_t buffer;
-  LOG_DEBUG_STRING("Reading data from input");
+  LOG_DATA_DEBUG("Reading data from input");
 
   /* Se inicializa el buffer de acumulacion de linea */
   result = buffer_init(&buffer);
   if (!result) {
-    LOG_DEBUG_STRING("Unable to initialize buffer on data_read");
-    LOG_ERROR_STRING("Unable to initialize line buffer");
+    LOG_DATA_DEBUG("Unable to initialize buffer on data_read");
+    LOG_ERROR("Unable to initialize line buffer");
     return 0;
   }
 
   /* Se acumulan las lineas de todos los archivos */
-  /* TODO: Procesar multiples archivos */
-  result = accumulate_lines(data, stdin, &buffer);
-  if (!result) {
-    LOG_DEBUG_STRING("Unable to accumulate lines from file on data_read");
-    LOG_ERROR_STRING("Unable to accumulate lines from file");
-    buffer_cleanup(&buffer);
-    return 0;
+  if (args->file_count) {
+    int i;
+    FILE *input;
+    for (i = 0; i < args->file_count; i++) {
+      LOG_DATA_DEBUG("Processing new file from command line args");
+      LOG_DATA_DEBUG_SVAR(args->files[i]);
 
+      input = fopen(args->files[i], "r");
+      if (!input) {
+        printf("Unable to open file %s\n", args->files[i]);
+        buffer_cleanup(&buffer);
+        return 0;
+      }
+
+      result = accumulate_lines(data, input, &buffer);
+      if(!result) {
+        LOG_DATA_DEBUG("Unable to accumulate lines from multiple files on data_read");
+        LOG_ERROR("Unable to accumulate lines from multiple files");
+        fclose(input);
+        buffer_cleanup(&buffer);
+        return 0;
+      }
+
+      fclose(input);
+    }
+  } else {
+    LOG_DATA_DEBUG("Processing input from standard input");
+    result = accumulate_lines(data, stdin, &buffer);
+    if (!result) {
+      LOG_DATA_DEBUG("Unable to accumulate lines from file on data_read");
+      LOG_ERROR("Unable to accumulate lines from file");
+      buffer_cleanup(&buffer);
+      return 0;
+    }
   }
 
   /* Se limpian los recursos que no son mas necesarios */

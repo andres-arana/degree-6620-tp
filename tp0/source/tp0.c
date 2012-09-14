@@ -45,6 +45,7 @@ int main(int argc, char** argv) {
 
   /* Obtiene los datos a ordenar desde la entrada correspondiente */
   if (!data_read(&data, &args)) {
+    data_cleanup(&data);
     return 1;
   }
 
