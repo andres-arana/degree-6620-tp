@@ -1,32 +1,36 @@
-RAW_DEPS = buffer.h clargs.h cltext.h data.h stooge.h quicksort.h config.h
-RAW_OBJ = buffer.o data.o clargs.o cltext.o tp0.o stooge.o quicksort.o tp0.o
+DEPS = source/buffer.h source/clargs.h source/cltext.h source/data.h source/stooge.h source/quicksort.h source/config.h
+OBJ = build/buffer.o build/data.o build/clargs.o build/cltext.o build/tp0.o build/stooge.o build/quicksort.o
 
 VIRTUAL = gxemul-6620-20070927
 
 CC=gcc
-CFLAGS=-I./source -Wall -O0
-OBJ = $(patsubst %,build/%,$(RAW_OBJ))
-DEPS = $(patsubst %,source/%,$(RAW_DEPS))
-
-ifdef LOG_DEBUG_SORT
-  CFLAGS+= -DLOG_LEVEL_DEBUG_SORT
-endif
-
-ifdef LOG_DEBUG_DATA
-  CFLAGS+= -DLOG_LEVEL_DEBUG_DATA
-endif
-
-ifdef LOG_WARNING
-  CFLAGS+= -DLOG_LEVEL_WARNING
-endif
+CFLAGS=-I./source -Wall -O0 $(ACFLAGS)
 
 build: prepare tp0
 
 tp0: $(OBJ)
-	gcc -o build/$@ $^ $(CFLAGS)
+	gcc -o build/$@ $(OBJ) $(CFLAGS)
 
-build/%.o: source/%.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+build/buffer.o: source/buffer.c $(DEPS)
+	$(CC) -c -o $@ source/buffer.c $(CFLAGS)
+
+build/data.o: source/data.c $(DEPS)
+	$(CC) -c -o $@ source/data.c $(CFLAGS)
+
+build/clargs.o: source/clargs.c $(DEPS)
+	$(CC) -c -o $@ source/clargs.c $(CFLAGS)
+
+build/cltext.o: source/cltext.c $(DEPS)
+	$(CC) -c -o $@ source/cltext.c $(CFLAGS)
+
+build/tp0.o: source/tp0.c $(DEPS)
+	$(CC) -c -o $@ source/tp0.c $(CFLAGS)
+
+build/stooge.o: source/stooge.c $(DEPS)
+	$(CC) -c -o $@ source/stooge.c $(CFLAGS)
+
+build/quicksort.o: source/quicksort.c $(DEPS)
+	$(CC) -c -o $@ source/quicksort.c $(CFLAGS)
 
 prepare:
 	-mkdir -p build
@@ -42,3 +46,9 @@ virtual-start:
 
 virtual-reset:
 	rm -rf ./gxemul/$(VIRTUAL)
+
+virtual-copy:
+	scp -P 2222 -r Makefile source test root:orga6620@127.0.0.1:/root
+
+virtual-connect:
+	ssh -p 2222 root@127.0.0.1
