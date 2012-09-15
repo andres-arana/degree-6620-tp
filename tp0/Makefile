@@ -1,8 +1,10 @@
 RAW_DEPS = buffer.h clargs.h cltext.h data.h stooge.h quicksort.h config.h
 RAW_OBJ = buffer.o data.o clargs.o cltext.o tp0.o stooge.o quicksort.o tp0.o
 
+VIRTUAL = gxemul-6620-20070927
+
 CC=gcc
-CFLAGS=-I./source -Wall
+CFLAGS=-I./source -Wall -O0
 OBJ = $(patsubst %,build/%,$(RAW_OBJ))
 DEPS = $(patsubst %,source/%,$(RAW_DEPS))
 
@@ -32,5 +34,11 @@ prepare:
 clean:
 	rm -rf build
 
-virtual:
-	./gxemul/gxemul-6620-20070927/gxemul -e 3max -d ./gxemul/gxemul-6620-20070927/netbsd-pmax.img
+virtual-start:
+	sudo ifconfig lo:0 172.20.0.1
+	if [ ! -d ./gxemul/$(VIRTUAL) ]; then bzip2 -dc ./gxemul/$(VIRTUAL).tar.bz2 | cpio --sparse -i -v; mv $(VIRTUAL) ./gxemul/ ; fi
+	echo "ssh -R 2222:127.0.0.1:22 $(USER)@172.20.0.1" | xclip -sel clip
+	./gxemul/$(VIRTUAL)/gxemul -e 3max -d ./gxemul/$(VIRTUAL)/netbsd-pmax.img
+
+virtual-reset:
+	rm -rf ./gxemul/$(VIRTUAL)
