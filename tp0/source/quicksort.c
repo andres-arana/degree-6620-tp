@@ -4,7 +4,7 @@
 #include "config.h"
 
 int select_pivot(int start, int end) {
-  return ((start + end) / 2);
+  return (start + ((end - start) / 2));
 }
 
 void print_data(struct data_t* data) {
