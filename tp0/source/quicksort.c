@@ -22,8 +22,9 @@ void swap_lines(struct data_t* data, int position_line1, int position_line2) {
   LOG_SORT_DEBUG("line2 should be before line1");
   (data->table)[position_line1] = (data->table)[position_line2];
   (data->table)[position_line2] = temp;
-
+  #ifdef LOG_LEVEL_DEBUG_SORT
   print_data(data);
+  #endif
 }
 
 void sort_quicksort(struct data_t* data, int start, int end) {
