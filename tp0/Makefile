@@ -1,5 +1,19 @@
-DEPS = source/buffer.h source/clargs.h source/cltext.h source/data.h source/stooge.h source/quicksort.h source/config.h
-OBJ = build/buffer.o build/data.o build/clargs.o build/cltext.o build/tp0.o build/stooge.o build/quicksort.o
+DEPS = \
+       source/buffer.h \
+       source/clargs.h \
+       source/cltext.h \
+       source/data.h \
+       source/stooge.h \
+       source/quicksort.h \
+       source/config.h
+
+OBJ = build/buffer.o \
+      build/data.o \
+      build/clargs.o \
+      build/cltext.o \
+      build/tp0.o \
+      build/stooge.o \
+      build/quicksort.o
 
 VIRTUAL = gxemul-6620-20070927
 
@@ -36,7 +50,7 @@ prepare:
 	-mkdir -p build
 
 clean:
-	rm -rf build
+	rm -rf build tags
 
 virtual-start:
 	sudo ifconfig lo:0 172.20.0.1
@@ -48,7 +62,7 @@ virtual-reset:
 	rm -rf ./gxemul/$(VIRTUAL)
 
 virtual-copy:
-	scp -P 2222 -r Makefile source test root:orga6620@127.0.0.1:/root
+	scp -P 2222 -r Makefile source test time root@127.0.0.1:/root
 
 virtual-connect:
 	ssh -p 2222 root@127.0.0.1

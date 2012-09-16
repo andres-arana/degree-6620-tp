@@ -4,63 +4,100 @@ La resolución completa del trabajo práctico está contenida en este directorio
 Se incluye un makefile que permite generar cualquier artefacto relacionado al
 proyecto, así como también realizar tareas administrativas comunes.
 
-## Documentación
+## Estructura del directorio
 
-La documentación del proyecto está incluida completamente en el directorio
-`docs`. Se incluye el pdf del enunciado, la carátula, y los fuentes latex del
-informe propiamente dicho en este directorio.
+El directorio del trabajo práctico está organizado en las siguientes carpetas
+temáticas:
 
-La documentación completa se puede generar utilizando la tarea `build-docs` del
-makefile, a través del comando `make build-docs`. Todos los archivos
-intermedios de latex, así como el pdf final, serán ubicados en la carpeta
-`build` al ejecutar esta tarea.
+1. `docs`: Contiene el fuente latex del informe presentado, los gráficos
+   insertados en el mismo y todos los documentos adicionales adjuntados al
+   informe principal, como el enunciado y la carátula.
+2. `gxemul`: Contiene el emulador y máquina virtual utilizada para ejecutar el
+   trabajo práctico en la arquitectura MIPS requerida, en formato comprimido.
+3. `source`: Contiene el código fuente de la solución desarrollada, en lenguaje
+   C.
+4. `test`: Contiene los scripts de test automatizados y otros archivos
+   necesarios para ejecutar la regresión de prueba automática.
+5. `perf`: Contiene los archivos utilizados en la realización de las mediciones
+   de performance realizadas.
+6. `asm`: Contiene los artefactos compilados desde el código C a assembly en
+   las diferentes arquitecturas analizadas.
 
-## Ejecutables
+Adicionalmente, se incluye un archivo makefile con la definición de tareas de
+generación de artefactos y de utilidades varias. Todos los artefactos generados
+a través de make se situan en una carpeta `build` dentro del directorio del
+trabajo práctico, como los archivos de código objeto, los ejecutables finales
+linkeados o el pdf del informe.
 
-El programa utilizado para realizar el análisis del trabajo práctico está
-desarrollado en C, y su código fuente se encuentra en la carpeta `source`.
+## Makefile
 
-El ejecutable final se puede generar utilizando la tarea por defecto del
-makefile, a través del comando `make`. Todos los archivos intermedios de
-compilación, así como el ejecutable final serán ubicados en la carpeta `build`
-al ejecutar esta tarea.
+El makefile incluido contiene varias tareas que documentamos a continuación:
 
-Se pueden generar distintos ejecutables con diferentes niveles de log a la
-salida de errores. El tipo de ejecutable a generar se controla a través de las
-siguientes variables de make:
+### Limpieza
 
-1. `LOG_WARNING`: El ejecutable contendrá instrucciones para emitir por
-   la salida de errores avisos de situaciones que si bien no son errores
-   podrían indicar algún error en la lógica de ejecución.
-2. `LOG_DEBUG_SORT`: El ejecutable contendrá instrucciones para emitir
-   por la salida de errores avisos de información adicional de depuración en
-   los módulos de ordenación (tanto quicksort como stoogesort).
-3. `LOG_DEBUG_DATA`: El ejecutable contendrá instrucciones para emitir
-   por la salida de errores avisos de información adicional de depuración en
-   el módulo de procesamiento de la entrada al sistema.
+La tarea `clean` elimina todos los artefactos generados por make. Es
+especialmente útil para regenerar el ejecutable del trabajo práctico bajo otras
+condiciones de compilación (por ejemplo, con diferentes niveles de optimización
+o módulos de log).
 
-Por ejemplo, para generar un ejecutable con instrucciones adicionales para la
-depuración de los módulos de sort, es necesario invocar el comando `make
-LOG_DEBUG_SORT=1`. Alternativamente, make podría levantar estas variables del
-entorno, por lo que utilizando bash es posible ejecutar `export
-LOG_DEBUG_SORT=1` una única vez para la sesión y generar el ejecutable con
-`make` de ahí en adelante. Mientras mantengamos abierta la sesión, se generará
-siempre el ejecutable con la información adicional para depuración de los
-módulos de sort.
+### Compilación de ejecutables
 
-**Advertencia**: Make no recompila los fuentes al cambiar estos flags de log,
-por lo que si ya se precompiló algún fuente con un setting de log, no basta con
-invocar make con los nuevos flags para recompilarlo. Es necesario ejecutar el
-comando `make clean` (ver en Otras tareas administrativas) para que se
-recompile todo el proyecto como corresponde.
+La tarea default `build` genera los directorios necesarios, compila y linkea el
+ejecutable tp0 del trabajo práctico. Todos los archivos intermedios, así como
+el ejecutable final linkeado se generan en la carpeta `build` del directorio
+del trabajo práctico.
 
-## Otras tareas administrativas
+El sistema de compilación permite incluir flags adicionales en las llamadas al
+compilador a través de la variable de entorno `ACFLAGS`. Esto permite definir
+flags adicionales a la llamada de gcc, como -O4 para aplicar las optimizaciones
+agresivas, etc. Por ejemplo, la linea `ACFLAGS=-O4 make` compila el ejecutable
+con todas las optimizaciones disponibles.
 
-El makefile también incluye una tarea `clean` para limpiar todos los resultados
-intermedios y finales de la generación de ejecutables y documentación. Se puede
-ejecutar dicha tarea a través del comando `make clean`.
+También es posible habilitar o deshabilitar partes del sistema de log
+utilizando esta misma variable de entorno. El código fuente del programa
+utiliza las siguientes variables de preprocesador para habilitar estos módulos:
 
-En lo relacionado a la administración de la máquina virtual utilizada para la
-ejecución del trabajo práctico, se incluye una tarea para levantar la instancia
-virtual a través del comando `make virtual`.
+1. `LOG_LEVEL_WARNING`: Si está definida, habilita logs de condiciones que si
+   bien no constituyen un error, indican situaciones extrañas en la ejecución
+   del programa.
+2. `LOG_LEVEL_DEBUG_SORT`: Si está definida, habilita los logs de depuración en
+   los algoritmos de ordenamiento implementados.
+3. `LOG_LEVEL_DEBUG_DATA`: Si está definida, habilita los logs de depuración en
+   el módulo de procesamiento de entrada de datos (tanto por stdin como por
+   archivos).
 
+Para habilitar estos módulos, se puede utilizar la variable `ACFLAGS` para
+indicar al compilador que defina estas variables de procesador. Por ejemplo, la
+siguiente linea compila el ejecutable sin optimización alguna, y habilita los
+logs para el módulo de procesamiento de datos de entrada:
+
+    ACFLAGS="-O0 -DLOG_LEVEL_DEBUG_DATA" make
+
+### Administración de máquina virtual
+
+Dado que el trabajo práctico requiere la compilación y ejecución de código en
+una arquitectura MIPS corriendo en el emulador gxemul, se incluye tareas de
+administración de dicha máquina virtual.
+
+La tarea `virtual-start` agrega una IP de loopback (172.20.0.1), expande el
+archivo comprimido que contiene la virtual si no se expandió previamente y
+ejecuta la imagen de la virtual en el emulador. La máquina virtual tiene como
+usuario `root` y como password `orga6621`. Adicionalmente, esta tarea copia al
+portapapeles el comando utilizado para habilitar el puerto `2222` en la máquina
+host como tunel a través de ssh tunneling. Esto es especialmente útil para
+poder conectarse a la virtual desde la máquina host: después de ejecutar `make
+virtual-start` y loguearse, sólo es necesario pegar el contenido del
+portapapeles para abrir el puerto y poder conectarse desde el host a la
+virtual.
+
+La tarea `virtual-reset` elimina la virtual expandida a través de
+`virtual-start`. La próxima vez que se ejecute `virtual-start`, la máquina
+virtual será expandida nuevamente, de manera de poder contar con una virtual
+limpia cuando sea necesario.
+
+La tarea `virtual-copy` copia los contenidos del trabajo práctico por `scp` al
+directorio `/root/` de la máquina virtual. Es necesario primero habilitar el
+puerto `2222` por ssh tunneling como se indico previamente.
+
+La tarea `virtual-connect` abre una conexión por ssh a la máquina virtual.
+Nuevamente, es necesario primero habilitar el puerto de conexión.
