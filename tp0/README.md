@@ -1,8 +1,4 @@
-# Trabajo práctico 0: Infraestructura básica
-
-La resolución completa del trabajo práctico está contenida en este directorio.
-Se incluye un makefile que permite generar cualquier artefacto relacionado al
-proyecto, así como también realizar tareas administrativas comunes.
+# README
 
 ## Estructura del directorio
 
@@ -93,16 +89,16 @@ Dado que el trabajo práctico requiere la compilación y ejecución de código e
 una arquitectura MIPS corriendo en el emulador gxemul, se incluye tareas de
 administración de dicha máquina virtual.
 
-La tarea `virtual-start` agrega una IP de loopback (172.20.0.1), expande el
-archivo comprimido que contiene la virtual si no se expandió previamente y
-ejecuta la imagen de la virtual en el emulador. La máquina virtual tiene como
-usuario `root` y como password `orga6621`. Adicionalmente, esta tarea copia al
-portapapeles el comando utilizado para habilitar el puerto `2222` en la máquina
-host como tunel a través de ssh tunneling. Esto es especialmente útil para
-poder conectarse a la virtual desde la máquina host: después de ejecutar `make
-virtual-start` y loguearse, si se pega en la consola el contenido del
-portapapeles se ejecuta un comando que abre un ssh tunnel en el puerto `2222`,
-para poder conectarse a ese puerto en la máquina host por ssh
+La tarea `virtual-start` agrega una IP de loopback (172.20.0.1) al host,
+expande el archivo comprimido que contiene la virtual si no se expandió
+previamente y ejecuta la imagen de la virtual en el emulador. La máquina
+virtual tiene como usuario `root` y como password `orga6620`. Adicionalmente,
+esta tarea copia al portapapeles el comando utilizado para habilitar el puerto
+`2222` en la máquina host como tunel a través de ssh tunneling. Esto es
+especialmente útil para poder conectarse a la virtual desde la máquina host:
+después de ejecutar `make virtual-start` y loguearse, si se pega en la consola
+el contenido del portapapeles se ejecuta un comando que abre un ssh tunnel en
+el puerto `2222`, para poder conectarse a ese puerto en la máquina host por ssh
 
 La tarea `virtual-reset` elimina la virtual expandida a través de
 `virtual-start`. La próxima vez que se ejecute `virtual-start`, la máquina
@@ -127,7 +123,7 @@ datos de cada uno de los archivos en `perf/data`. Concatena la información de
 time de cada uno de estos archivos en un archivo generado en `build/perf/raw`
 
 La tarea `perf-analyze` ejecuta el script `perf/analyze.rb`, encargado de
-analizar todos los archivos que se encuentren en `build/perf/raw` y generar los
+analizar todos los archivos que se encuentren en `perf/times` y generar los
 CSV resumidos en `build/perf/analyzed`.
 
 ### Profiling
@@ -145,3 +141,13 @@ detallado de ejecución en `build/prof/analyzed/quicks`
 
 Se incluye una tarea `asm` que genera el código assembly de cada uno de los
 archivos fuente en el directorio `build/asm/`.
+
+### Generación de documentación
+
+La generación del informe final en PDF se realiza a través de la tarea `doc`.
+Esta compila el `README.md`, generando una versión en PDF para su inclusión en
+el informe final, y luego compila el fuente latex en `docs/informe.tex` y
+genera el pdf final en `build/doc/informe.pdf. 
+
+Se incluye además una tarea `doc-preview`, que regenera el informe y abre el
+visor de documentos evince para poder previsualizar cómo queda el mismo.

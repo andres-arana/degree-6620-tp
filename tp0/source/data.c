@@ -20,7 +20,7 @@ int data_init(struct data_t* data) {
 }
 
 int data_pushline(struct data_t* data, char* line) {
-  /* Si hay overflow, se suman otras 512 lineas al tamaño de la tabla */
+  /* Si hay overflow, se suman otras 512 lineas al tamanio de la tabla */
   if (data->size >= data->capacity) {
     char **new_table;
 

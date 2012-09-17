@@ -11,7 +11,7 @@ struct buffer_t {
   char* buffer;
 
   /*
-   * El tamaño del buffer
+   * El tamanio del buffer
    */
   unsigned int size;
 

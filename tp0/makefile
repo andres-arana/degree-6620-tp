@@ -79,6 +79,7 @@ build/asm/quicksort.s: source/quicksort.c $(DEPS)
 prepare:
 	-mkdir -p build
 	-mkdir -p build/asm
+	-mkdir -p build/doc
 	-mkdir -p build/obj
 	-mkdir -p build/perf
 	-mkdir -p build/perf/raw
@@ -121,3 +122,12 @@ prof: clean
 	gprof build/tp0 build/prof/raw/quicks.out > build/prof/analyzed/quicks
 
 asm: prepare $(ASM)
+
+doc: prepare
+	pandoc README.md -o build/doc/README.pdf
+	pdflatex --output-directory build/doc docs/informe.tex
+	pdflatex --output-directory build/doc docs/informe.tex
+	pdflatex --output-directory build/doc docs/informe.tex
+
+doc-preview: doc
+	evince build/doc/informe.pdf

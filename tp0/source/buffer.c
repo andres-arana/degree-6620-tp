@@ -22,7 +22,7 @@ int buffer_init(struct buffer_t* buffer) {
  * Ver documentacion en el header
  */
 int buffer_push(struct buffer_t* buffer, char c) {
-  /* Si hay overflow, se suman otros 32 bytes al tamaño del buffer */
+  /* Si hay overflow, se suman otros 32 bytes al tamanio del buffer */
   if (buffer->current >= buffer->size) {
     char* new_buffer;
 

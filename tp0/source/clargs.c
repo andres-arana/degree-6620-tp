@@ -3,7 +3,7 @@
 #include "clargs.h"
 
 /*
- * Imprime un mensaje de error por una opcion inválida.
+ * Imprime un mensaje de error por una opcion invalida.
  */
 void show_invalid_option(char* offending_option) {
   printf("Invalid option: %s\n\n", offending_option);

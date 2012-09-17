@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  /* Procesa la información de versión */
+  /* Procesa la informacion de version */
   if (args.version) {
     cl_text_version();
     return 0;
