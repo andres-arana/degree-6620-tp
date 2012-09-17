@@ -95,9 +95,9 @@ usuario `root` y como password `orga6621`. Adicionalmente, esta tarea copia al
 portapapeles el comando utilizado para habilitar el puerto `2222` en la máquina
 host como tunel a través de ssh tunneling. Esto es especialmente útil para
 poder conectarse a la virtual desde la máquina host: después de ejecutar `make
-virtual-start` y loguearse, sólo es necesario pegar el contenido del
-portapapeles para abrir el puerto y poder conectarse desde el host a la
-virtual.
+virtual-start` y loguearse, si se pega en la consola el contenido del
+portapapeles se ejecuta un comando que abre un ssh tunnel en el puerto `2222`,
+para poder conectarse a ese puerto en la máquina host por ssh
 
 La tarea `virtual-reset` elimina la virtual expandida a través de
 `virtual-start`. La próxima vez que se ejecute `virtual-start`, la máquina
@@ -105,7 +105,7 @@ virtual será expandida nuevamente, de manera de poder contar con una virtual
 limpia cuando sea necesario.
 
 La tarea `virtual-copy` copia los contenidos del trabajo práctico por `scp` al
-directorio `/root/` de la máquina virtual. Es necesario primero habilitar el
+directorio `/root/tp` de la máquina virtual. Es necesario primero habilitar el
 puerto `2222` por ssh tunneling como se indico previamente.
 
 La tarea `virtual-connect` abre una conexión por ssh a la máquina virtual.

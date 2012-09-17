@@ -18,7 +18,7 @@ OBJ = build/obj/buffer.o \
 VIRTUAL = gxemul-6620-20070927
 
 CC=gcc
-CFLAGS=-I./source -Wall -O0 $(ACFLAGS)
+CFLAGS=-I./source -Wall $(ACFLAGS)
 
 build: prepare tp0
 
