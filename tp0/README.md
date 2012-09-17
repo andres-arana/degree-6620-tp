@@ -18,8 +18,17 @@ temáticas:
    C.
 4. `test`: Contiene los scripts de test automatizados y otros archivos
    necesarios para ejecutar la regresión de prueba automática.
-5. `perf`: Contiene los archivos utilizados en la realización de las mediciones
-   de performance realizadas.
+5. `perf`: Contiene los archivos y scripts de análisis utilizados en la
+   realización de las mediciones de performance realizadas.
+6. `perf/data`: Contiene los archivos procesados al realizar el análisis de
+   performance. Cada uno de estos archivos tiene un nombre de la forma
+   `NNk_SORT_MODE`, donde `NN` es el tamaño en kb del archivo, `SORT` es `inv`
+   para sorting inverso, `sor` para sorting regular y `rnd` para sorting al
+   azar y finalmente `MODE` es `ll` para archivos con tamaño de linea grande y
+   baja cantidad de lineas y `sl` para archivos con tamaño de linea pequeña y
+   alta cantidad de lineas.
+7. `perf/times`: Contiene el resultado de ejecutar el comando time para cada
+   uno de los archivos de `perf/data`, dentro de la virtual.
 6. `asm`: Contiene los artefactos compilados desde el código C a assembly en
    las diferentes arquitecturas analizadas.
 
@@ -31,7 +40,7 @@ linkeados o el pdf del informe.
 
 ## Makefile
 
-El makefile incluido contiene varias tareas que documentamos a continuación:
+El makefile incluido contiene varias tareas documentadas a continuación.
 
 ### Limpieza
 
@@ -101,3 +110,15 @@ puerto `2222` por ssh tunneling como se indico previamente.
 
 La tarea `virtual-connect` abre una conexión por ssh a la máquina virtual.
 Nuevamente, es necesario primero habilitar el puerto de conexión.
+
+### Análisis de performance
+
+Para facilitar el análisis de performance se agregaron dos tareas relacionadas.
+
+La tarea `perf-data` lanza el ejecutable del trabajo práctico para ordenar los
+datos de cada uno de los archivos en `perf/data`. Concatena la información de
+time de cada uno de estos archivos en un archivo generado en `build/perf/raw`
+
+La tarea `perf-analyze` ejecuta el script `perf/analyze.rb`, encargado de
+analizar todos los archivos que se encuentren en `build/perf/raw` y generar los
+CSV resumidos en `build/perf/analyzed`.
