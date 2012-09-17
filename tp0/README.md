@@ -29,8 +29,8 @@ temáticas:
    alta cantidad de lineas.
 7. `perf/times`: Contiene el resultado de ejecutar el comando time para cada
    uno de los archivos de `perf/data`, dentro de la virtual.
-6. `asm`: Contiene los artefactos compilados desde el código C a assembly en
-   las diferentes arquitecturas analizadas.
+8. `asm`: Contiene los artefactos compilados desde el código C a assembly en
+   la arquitectura analizada (MIPS).
 
 Adicionalmente, se incluye un archivo makefile con la definición de tareas de
 generación de artefactos y de utilidades varias. Todos los artefactos generados
@@ -104,9 +104,11 @@ La tarea `virtual-reset` elimina la virtual expandida a través de
 virtual será expandida nuevamente, de manera de poder contar con una virtual
 limpia cuando sea necesario.
 
-La tarea `virtual-copy` copia los contenidos del trabajo práctico por `scp` al
-directorio `/root/tp` de la máquina virtual. Es necesario primero habilitar el
-puerto `2222` por ssh tunneling como se indico previamente.
+La tarea `virtual-deploy-all` copia los contenidos del trabajo práctico por
+`scp` al directorio `/root/tp` de la máquina virtual. Es necesario primero
+habilitar el puerto `2222` por ssh tunneling como se indico previamente. Por
+otro lado, la tarea `virtual-deploy-source` solo copia el makefile y los
+contenidos de la carpeta `source` al mismo directorio de la máquina virtual.
 
 La tarea `virtual-connect` abre una conexión por ssh a la máquina virtual.
 Nuevamente, es necesario primero habilitar el puerto de conexión.
@@ -135,3 +137,7 @@ programa y acumula las estadísticas de datos en `build/prof/raw/quicks.out`.
 Finalmente utiliza el comando gprof para analizar los datos acumulados,
 generando un reporte detallado de ejecución en `build/prof/analyzed/quicks`
 
+### Generación de assembly
+
+Se incluye una tarea `asm` que genera el código assembly de cada uno de los
+archivos fuente en el directorio `build/asm/`.

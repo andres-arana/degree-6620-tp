@@ -15,6 +15,15 @@ OBJ = build/obj/buffer.o \
       build/obj/stooge.o \
       build/obj/quicksort.o
 
+
+ASM = build/asm/buffer.s \
+      build/asm/data.s \
+      build/asm/clargs.s \
+      build/asm/cltext.s \
+      build/asm/tp0.s \
+      build/asm/stooge.s \
+      build/asm/quicksort.s
+
 VIRTUAL = gxemul-6620-20070927
 
 CC=gcc
@@ -28,26 +37,48 @@ tp0: $(OBJ)
 build/obj/buffer.o: source/buffer.c $(DEPS)
 	$(CC) -c -o $@ source/buffer.c $(CFLAGS)
 
+build/asm/buffer.s: source/buffer.c $(DEPS)
+	$(CC) -S -o $@ source/buffer.c $(CFLAG)
+
 build/obj/data.o: source/data.c $(DEPS)
 	$(CC) -c -o $@ source/data.c $(CFLAGS)
+
+build/asm/data.s: source/data.c $(DEPS)
+	$(CC) -S -o $@ source/data.c $(CFLAG)
 
 build/obj/clargs.o: source/clargs.c $(DEPS)
 	$(CC) -c -o $@ source/clargs.c $(CFLAGS)
 
+build/asm/clargs.s: source/clargs.c $(DEPS)
+	$(CC) -S -o $@ source/clargs.c $(CFLAG)
+
 build/obj/cltext.o: source/cltext.c $(DEPS)
 	$(CC) -c -o $@ source/cltext.c $(CFLAGS)
+
+build/asm/cltext.s: source/cltext.c $(DEPS)
+	$(CC) -S -o $@ source/cltext.c $(CFLAG)
 
 build/obj/tp0.o: source/tp0.c $(DEPS)
 	$(CC) -c -o $@ source/tp0.c $(CFLAGS)
 
+build/asm/tp0.s: source/tp0.c $(DEPS)
+	$(CC) -S -o $@ source/tp0.c $(CFLAG)
+
 build/obj/stooge.o: source/stooge.c $(DEPS)
 	$(CC) -c -o $@ source/stooge.c $(CFLAGS)
+
+build/asm/stooge.s: source/stooge.c $(DEPS)
+	$(CC) -S -o $@ source/stooge.c $(CFLAG)
 
 build/obj/quicksort.o: source/quicksort.c $(DEPS)
 	$(CC) -c -o $@ source/quicksort.c $(CFLAGS)
 
+build/asm/quicksort.s: source/quicksort.c $(DEPS)
+	$(CC) -S -o $@ source/quicksort.c $(CFLAG)
+
 prepare:
 	-mkdir -p build
+	-mkdir -p build/asm
 	-mkdir -p build/obj
 	-mkdir -p build/perf
 	-mkdir -p build/perf/raw
@@ -67,8 +98,11 @@ virtual-start:
 virtual-reset:
 	rm -rf ./gxemul/$(VIRTUAL)
 
-virtual-copy:
+virtual-deploy-all:
 	scp -P 2222 -r makefile source test perf root@127.0.0.1:/root/tp
+
+virtual-deploy-source:
+	scp -P 2222 -r makefile source root@127.0.0.1:/root/tp
 
 virtual-connect:
 	ssh -p 2222 root@127.0.0.1
@@ -86,3 +120,4 @@ prof: clean
 	mv gmon.out build/prof/raw/quicks.out
 	gprof build/tp0 build/prof/raw/quicks.out > build/prof/analyzed/quicks
 
+asm: prepare $(ASM)
