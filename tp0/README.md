@@ -31,6 +31,11 @@ temáticas:
    uno de los archivos de `perf/data`, dentro de la virtual.
 8. `asm`: Contiene los artefactos compilados desde el código C a assembly en
    la arquitectura analizada (MIPS).
+9. `prof`: Contiene los archivos relacionados con el perfilado del algoritmo de
+   ordenamiento quicksort. En particular contiene el archivo `results`, con el
+   resultado de la ejecución del perfilado dentro de la virtual, y por otro
+   lado el archivo `data/input`, con los datos de entrada utilizados en el
+   proceso de perfilado.
 
 Adicionalmente, se incluye un archivo makefile con la definición de tareas de
 generación de artefactos y de utilidades varias. Todos los artefactos generados
@@ -130,12 +135,11 @@ CSV resumidos en `build/perf/analyzed`.
 Para facilitar el profiling de la aplicación se agregaron las siguientes tareas:
 
 La tarea `prof` recompila el ejecutable con las opciones `-O0 -pg`, lo que
-habilita la colección de datos de profiling durante su ejecución. Cuando se
-ejecute el programa, se generará el archivo gmon.out, utilizado por `gprof`
-para analizar los tiempos de ejecución de cada función. Luego ejecuta el
-programa y acumula las estadísticas de datos en `build/prof/raw/quicks.out`.
-Finalmente utiliza el comando gprof para analizar los datos acumulados,
-generando un reporte detallado de ejecución en `build/prof/analyzed/quicks`
+habilita la colección de datos de profiling durante su ejecución. Luego ejecuta
+el programa con los datos de entrada localizados en `prof/data/input` y acumula
+las estadísticas de datos en `build/prof/raw/quicks.out`.  Finalmente utiliza
+el comando gprof para analizar los datos acumulados, generando un reporte
+detallado de ejecución en `build/prof/analyzed/quicks`
 
 ### Generación de assembly
 

@@ -99,7 +99,7 @@ virtual-reset:
 	rm -rf ./gxemul/$(VIRTUAL)
 
 virtual-deploy-all:
-	scp -P 2222 -r makefile source test perf root@127.0.0.1:/root/tp
+	scp -P 2222 -r makefile source test perf prof root@127.0.0.1:/root/tp
 
 virtual-deploy-source:
 	scp -P 2222 -r makefile source root@127.0.0.1:/root/tp
@@ -116,7 +116,7 @@ perf-analyze:
 
 prof: clean
 	ACFLAGS="-O0 -pg" make
-	cat perf/data/32k_rnd_sl | ./build/tp0 -q > /dev/null
+	./build/tp0 -q prof/data/input > /dev/null
 	mv gmon.out build/prof/raw/quicks.out
 	gprof build/tp0 build/prof/raw/quicks.out > build/prof/analyzed/quicks
 

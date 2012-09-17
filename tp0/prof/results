@@ -1,0 +1,627 @@
+Flat profile:
+
+Each sample counts as 0.00390625 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 52.94      0.14     0.14        1   140.62   140.62  fopen
+ 11.76      0.17     0.03    32304     0.00     0.00  fgetc
+ 10.29      0.20     0.03        1    27.34   105.08  accumulate_lines
+  7.35      0.22     0.02    32724     0.00     0.00  __flockfile_internal
+  4.41      0.23     0.01    31884     0.00     0.00  buffer_push
+  4.41      0.24     0.01      840     0.01     0.01  memcpy
+  2.94      0.25     0.01      445     0.02     0.02  malloc_bytes
+  2.94      0.26     0.01      419     0.02     0.04  buffer_reset
+  1.47      0.26     0.00     5735     0.00     0.00  strcmp
+  1.47      0.27     0.00        1     3.91     7.80  sort_quicksort
+  0.00      0.27     0.00    32724     0.00     0.00  __funlockfile_internal
+  0.00      0.27     0.00     1159     0.00     0.00  swap_lines
+  0.00      0.27     0.00      460     0.00     0.00  ifree
+  0.00      0.27     0.00      447     0.00     0.00  imalloc
+  0.00      0.27     0.00      443     0.00     0.00  free_bytes
+  0.00      0.27     0.00      423     0.00     0.02  malloc
+  0.00      0.27     0.00      422     0.00     0.00  free
+  0.00      0.27     0.00      419     0.00     0.03  __sfvwrite
+  0.00      0.27     0.00      419     0.00     0.00  data_pushline
+  0.00      0.27     0.00      419     0.00     0.03  puts
+  0.00      0.27     0.00      419     0.00     0.00  strlen
+  0.00      0.27     0.00      274     0.00     0.00  select_pivot
+  0.00      0.27     0.00       20     0.00     0.00  sbrk
+  0.00      0.27     0.00       19     0.00     0.00  malloc_pages
+  0.00      0.27     0.00       19     0.00     0.00  strncmp
+  0.00      0.27     0.00       18     0.00     0.00  map_pages
+  0.00      0.27     0.00       17     0.00     0.00  __libc_cond_init
+  0.00      0.27     0.00       17     0.00     0.00  __libc_mutex_init
+  0.00      0.27     0.00       17     0.00     0.01  free_pages
+  0.00      0.27     0.00       17     0.00     0.00  malloc_make_chunks
+  0.00      0.27     0.00        4     0.00     0.00  __errno
+  0.00      0.27     0.00        4     0.00     0.00  __libc_rwlock_rdlock
+  0.00      0.27     0.00        3     0.00     0.00  __libc_mutex_destroy
+  0.00      0.27     0.00        3     0.00     0.00  __sread
+  0.00      0.27     0.00        3     0.00     0.01  __srefill
+  0.00      0.27     0.00        3     0.00     0.01  __srget
+  0.00      0.27     0.00        3     0.00     0.02  irealloc
+  0.00      0.27     0.00        3     0.00     0.00  read
+  0.00      0.27     0.00        3     0.00     0.02  realloc
+  0.00      0.27     0.00        2     0.00     0.00  __fstat13
+  0.00      0.27     0.00        2     0.00     0.02  __smakebuf
+  0.00      0.27     0.00        2     0.00     0.00  __swhatbuf
+  0.00      0.27     0.00        2     0.00     0.00  __sysctl
+  0.00      0.27     0.00        2     0.00     0.00  sysctl
+  0.00      0.27     0.00        1     0.00     0.00  __cxa_atexit
+  0.00      0.27     0.00        1     0.00     0.00  __cxa_finalize
+  0.00      0.27     0.00        1     0.00     0.00  __findenv
+  0.00      0.27     0.00        1     0.00     0.00  __libc_thr_self
+  0.00      0.27     0.00        1     0.00     0.00  __sclose
+  0.00      0.27     0.00        1     0.00     0.00  __sflags
+  0.00      0.27     0.00        1     0.00     0.00  __sfp
+  0.00      0.27     0.00        1     0.00     0.00  __sinit
+  0.00      0.27     0.00        1     0.00     0.02  __swsetup
+  0.00      0.27     0.00        1     0.00     0.00  __syscall
+  0.00      0.27     0.00        1     0.00     0.00  atexit_handler_alloc
+  0.00      0.27     0.00        1     0.00     0.00  buffer_cleanup
+  0.00      0.27     0.00        1     0.00     0.02  buffer_init
+  0.00      0.27     0.00        1     0.00     0.00  buffer_pending
+  0.00      0.27     0.00        1     0.00     0.01  cl_args_parse
+  0.00      0.27     0.00        1     0.00     0.00  cl_args_validate
+  0.00      0.27     0.00        1     0.00     0.00  close
+  0.00      0.27     0.00        1     0.00     0.09  data_cleanup
+  0.00      0.27     0.00        1     0.00    11.96  data_display
+  0.00      0.27     0.00        1     0.00     0.02  data_init
+  0.00      0.27     0.00        1     0.00   245.75  data_read
+  0.00      0.27     0.00        1     0.00     0.02  data_shrink
+  0.00      0.27     0.00        1     0.00     0.00  fclose
+  0.00      0.27     0.00        1     0.00     0.00  getenv
+  0.00      0.27     0.00        1     0.00     0.00  ioctl
+  0.00      0.27     0.00        1     0.00     0.00  isatty
+  0.00      0.27     0.00        1     0.00     0.00  issetugid
+  0.00      0.27     0.00        1     0.00     0.02  malloc_init
+  0.00      0.27     0.00        1     0.00     0.00  memset
+  0.00      0.27     0.00        1     0.00     0.00  mmap
+  0.00      0.27     0.00        1     0.00     0.00  open
+  0.00      0.27     0.00        1     0.00     0.00  profil
+  0.00      0.27     0.00        1     0.00     0.00  readlink
+  0.00      0.27     0.00        1     0.00     0.00  sysconf
+  0.00      0.27     0.00        1     0.00     0.00  tcgetattr
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 4 byte(s) for 1.47% of 0.27 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]    100.0    0.00    0.27                 main [1]
+                0.00    0.25       1/1           data_read [2]
+                0.00    0.01       1/1           data_display [9]
+                0.00    0.00       1/1           sort_quicksort [15]
+                0.00    0.00       1/1           data_cleanup [21]
+                0.00    0.00       1/1           data_init [27]
+                0.00    0.00       1/1           cl_args_parse [32]
+                0.00    0.00       1/1           cl_args_validate [69]
+-----------------------------------------------
+                0.00    0.25       1/1           main [1]
+[2]     92.5    0.00    0.25       1         data_read [2]
+                0.14    0.00       1/1           fopen [3]
+                0.03    0.08       1/1           accumulate_lines [4]
+                0.00    0.00       1/1           data_shrink [25]
+                0.00    0.00       1/1           buffer_init [26]
+                0.00    0.00       1/1           fclose [33]
+                0.00    0.00       1/1           buffer_cleanup [34]
+-----------------------------------------------
+                0.14    0.00       1/1           data_read [2]
+[3]     52.9    0.14    0.00       1         fopen [3]
+                0.00    0.00       1/1           __sfp [35]
+                0.00    0.00       1/1           __sflags [235]
+                0.00    0.00       1/1           open [74]
+-----------------------------------------------
+                0.03    0.08       1/1           data_read [2]
+[4]     39.6    0.03    0.08       1         accumulate_lines [4]
+                0.03    0.02   32304/32304       fgetc [5]
+                0.01    0.01     419/419         buffer_reset [7]
+                0.01    0.00   31884/31884       buffer_push [10]
+                0.00    0.00     419/419         data_pushline [61]
+                0.00    0.00       1/1           buffer_pending [68]
+-----------------------------------------------
+                0.03    0.02   32304/32304       accumulate_lines [4]
+[5]     19.0    0.03    0.02   32304         fgetc [5]
+                0.02    0.00   32304/32724       __flockfile_internal [6]
+                0.00    0.00       3/3           __srget [29]
+                0.00    0.00   32304/32724       __funlockfile_internal [226]
+-----------------------------------------------
+                0.00    0.00       1/32724       fclose [33]
+                0.00    0.00     419/32724       puts [8]
+                0.02    0.00   32304/32724       fgetc [5]
+[6]      7.4    0.02    0.00   32724         __flockfile_internal [6]
+-----------------------------------------------
+                0.01    0.01     419/419         accumulate_lines [4]
+[7]      5.8    0.01    0.01     419         buffer_reset [7]
+                0.00    0.01     419/423         malloc [16]
+-----------------------------------------------
+                0.00    0.01     419/419         data_display [9]
+[8]      4.5    0.00    0.01     419         puts [8]
+                0.00    0.01     419/419         __sfvwrite [12]
+                0.00    0.00     419/32724       __flockfile_internal [6]
+                0.00    0.00     419/419         strlen [62]
+                0.00    0.00     419/32724       __funlockfile_internal [226]
+-----------------------------------------------
+                0.00    0.01       1/1           main [1]
+[9]      4.5    0.00    0.01       1         data_display [9]
+                0.00    0.01     419/419         puts [8]
+-----------------------------------------------
+                0.01    0.00   31884/31884       accumulate_lines [4]
+[10]     4.4    0.01    0.00   31884         buffer_push [10]
+                0.00    0.00       2/3           realloc [23]
+-----------------------------------------------
+                0.00    0.00       2/840         irealloc [22]
+                0.01    0.00     838/840         __sfvwrite [12]
+[11]     4.4    0.01    0.00     840         memcpy [11]
+-----------------------------------------------
+                0.00    0.01     419/419         puts [8]
+[12]     4.4    0.00    0.01     419         __sfvwrite [12]
+                0.01    0.00     838/840         memcpy [11]
+                0.00    0.00       1/1           __swsetup [30]
+-----------------------------------------------
+[13]     2.9    0.01    0.00     431+478     <cycle 1 as a whole> [13]
+                0.01    0.00     445             malloc_bytes <cycle 1> [14]
+                0.00    0.00     447             imalloc <cycle 1> [46]
+-----------------------------------------------
+                                 445             imalloc <cycle 1> [46]
+[14]     2.9    0.01    0.00     445         malloc_bytes <cycle 1> [14]
+                                  17             malloc_make_chunks <cycle 1> [36]
+-----------------------------------------------
+                                 548             sort_quicksort [15]
+                0.00    0.00       1/1           main [1]
+[15]     2.9    0.00    0.00       1+548     sort_quicksort [15]
+                0.00    0.00    5722/5735        strcmp [17]
+                0.00    0.00    1159/1159        swap_lines [58]
+                0.00    0.00     274/274         select_pivot [63]
+                                 548             sort_quicksort [15]
+-----------------------------------------------
+                0.00    0.00       1/423         buffer_init [26]
+                0.00    0.00       1/423         data_init [27]
+                0.00    0.00       2/423         __smakebuf [24]
+                0.00    0.01     419/423         buffer_reset [7]
+[16]     2.9    0.00    0.01     423         malloc [16]
+                0.01    0.00     423/431         imalloc <cycle 1> [46]
+                0.00    0.00       1/1           malloc_init [31]
+-----------------------------------------------
+                0.00    0.00      13/5735        cl_args_parse [32]
+                0.00    0.00    5722/5735        sort_quicksort [15]
+[17]     1.5    0.00    0.00    5735         strcmp [17]
+-----------------------------------------------
+[18]     0.0    0.00    0.00     424+496     <cycle 2 as a whole> [18]
+                0.00    0.00     460             ifree <cycle 2> [59]
+                0.00    0.00     443             free_bytes <cycle 2> [60]
+-----------------------------------------------
+                                  17             ifree <cycle 2> [59]
+[19]     0.0    0.00    0.00      17         free_pages <cycle 2> [19]
+                0.00    0.00       5/431         imalloc <cycle 1> [46]
+                                   4             ifree <cycle 2> [59]
+-----------------------------------------------
+                0.00    0.00       1/422         buffer_cleanup [34]
+                0.00    0.00       1/422         fclose [33]
+                0.00    0.00     420/422         data_cleanup [21]
+[20]     0.0    0.00    0.00     422         free [20]
+                0.00    0.00     422/424         ifree <cycle 2> [59]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[21]     0.0    0.00    0.00       1         data_cleanup [21]
+                0.00    0.00     420/422         free [20]
+-----------------------------------------------
+                0.00    0.00       3/3           realloc [23]
+[22]     0.0    0.00    0.00       3         irealloc [22]
+                0.00    0.00       2/431         imalloc <cycle 1> [46]
+                0.00    0.00       2/840         memcpy [11]
+                0.00    0.00       2/424         ifree <cycle 2> [59]
+-----------------------------------------------
+                0.00    0.00       1/3           data_shrink [25]
+                0.00    0.00       2/3           buffer_push [10]
+[23]     0.0    0.00    0.00       3         realloc [23]
+                0.00    0.00       3/3           irealloc [22]
+-----------------------------------------------
+                0.00    0.00       1/2           __srefill [28]
+                0.00    0.00       1/2           __swsetup [30]
+[24]     0.0    0.00    0.00       2         __smakebuf [24]
+                0.00    0.00       2/423         malloc [16]
+                0.00    0.00       1/1           isatty [41]
+                0.00    0.00       2/2           __swhatbuf [54]
+-----------------------------------------------
+                0.00    0.00       1/1           data_read [2]
+[25]     0.0    0.00    0.00       1         data_shrink [25]
+                0.00    0.00       1/3           realloc [23]
+-----------------------------------------------
+                0.00    0.00       1/1           data_read [2]
+[26]     0.0    0.00    0.00       1         buffer_init [26]
+                0.00    0.00       1/423         malloc [16]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[27]     0.0    0.00    0.00       1         data_init [27]
+                0.00    0.00       1/423         malloc [16]
+-----------------------------------------------
+                0.00    0.00       3/3           __srget [29]
+[28]     0.0    0.00    0.00       3         __srefill [28]
+                0.00    0.00       1/2           __smakebuf [24]
+                0.00    0.00       3/3           __sread [53]
+-----------------------------------------------
+                0.00    0.00       3/3           fgetc [5]
+[29]     0.0    0.00    0.00       3         __srget [29]
+                0.00    0.00       3/3           __srefill [28]
+-----------------------------------------------
+                0.00    0.00       1/1           __sfvwrite [12]
+[30]     0.0    0.00    0.00       1         __swsetup [30]
+                0.00    0.00       1/2           __smakebuf [24]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc [16]
+[31]     0.0    0.00    0.00       1         malloc_init [31]
+                0.00    0.00       1/431         imalloc <cycle 1> [46]
+                0.00    0.00       1/1           getenv [37]
+                0.00    0.00       1/1           sysconf [50]
+                0.00    0.00       1/1           mmap [49]
+                0.00    0.00       2/4           __errno [229]
+                0.00    0.00       1/20          sbrk [64]
+                0.00    0.00       1/1           readlink [76]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[32]     0.0    0.00    0.00       1         cl_args_parse [32]
+                0.00    0.00      13/5735        strcmp [17]
+-----------------------------------------------
+                0.00    0.00       1/1           data_read [2]
+[33]     0.0    0.00    0.00       1         fclose [33]
+                0.00    0.00       1/32724       __flockfile_internal [6]
+                0.00    0.00       1/422         free [20]
+                0.00    0.00       1/1           __sclose [56]
+                0.00    0.00       1/32724       __funlockfile_internal [226]
+-----------------------------------------------
+                0.00    0.00       1/1           data_read [2]
+[34]     0.0    0.00    0.00       1         buffer_cleanup [34]
+                0.00    0.00       1/422         free [20]
+-----------------------------------------------
+                0.00    0.00       1/1           fopen [3]
+[35]     0.0    0.00    0.00       1         __sfp [35]
+                0.00    0.00       1/1           __sinit [44]
+                0.00    0.00       2/4           __libc_rwlock_rdlock [230]
+                0.00    0.00       1/1           memset [73]
+-----------------------------------------------
+                                  17             malloc_bytes <cycle 1> [14]
+[36]     0.0    0.00    0.00      17         malloc_make_chunks <cycle 1> [36]
+                0.00    0.00      17/19          malloc_pages [40]
+                                  16             imalloc <cycle 1> [46]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init [31]
+[37]     0.0    0.00    0.00       1         getenv [37]
+                0.00    0.00       1/1           __findenv [55]
+                0.00    0.00       2/4           __libc_rwlock_rdlock [230]
+-----------------------------------------------
+                                                 <spontaneous>
+[38]     0.0    0.00    0.00                 atexit [38]
+                0.00    0.00       1/1           __cxa_atexit [42]
+-----------------------------------------------
+                                                 <spontaneous>
+[39]     0.0    0.00    0.00                 exit [39]
+                0.00    0.00       1/1           __cxa_finalize [43]
+-----------------------------------------------
+                0.00    0.00       2/19          imalloc <cycle 1> [46]
+                0.00    0.00      17/19          malloc_make_chunks <cycle 1> [36]
+[40]     0.0    0.00    0.00      19         malloc_pages [40]
+                0.00    0.00      18/18          map_pages [47]
+-----------------------------------------------
+                0.00    0.00       1/1           __smakebuf [24]
+[41]     0.0    0.00    0.00       1         isatty [41]
+                0.00    0.00       1/1           tcgetattr [51]
+-----------------------------------------------
+                0.00    0.00       1/1           atexit [38]
+[42]     0.0    0.00    0.00       1         __cxa_atexit [42]
+                0.00    0.00       2/3           __libc_mutex_destroy [231]
+                0.00    0.00       1/1           atexit_handler_alloc [67]
+-----------------------------------------------
+                0.00    0.00       1/1           exit [39]
+[43]     0.0    0.00    0.00       1         __cxa_finalize [43]
+                0.00    0.00       1/3           __libc_mutex_destroy [231]
+                0.00    0.00       1/1           __libc_thr_self [234]
+-----------------------------------------------
+                0.00    0.00       1/1           __sfp [35]
+[44]     0.0    0.00    0.00       1         __sinit [44]
+                0.00    0.00      17/17          __libc_mutex_init [228]
+                0.00    0.00      17/17          __libc_cond_init [227]
+-----------------------------------------------
+                                                 <spontaneous>
+[45]     0.0    0.00    0.00                 _mcleanup [45]
+                0.00    0.00       1/1           issetugid [72]
+                0.00    0.00       1/2           sysctl [48]
+-----------------------------------------------
+                                  16             malloc_make_chunks <cycle 1> [36]
+                0.00    0.00       1/431         malloc_init [31]
+                0.00    0.00       2/431         irealloc [22]
+                0.00    0.00       5/431         free_pages <cycle 2> [19]
+                0.01    0.00     423/431         malloc [16]
+[46]     0.0    0.00    0.00     447         imalloc <cycle 1> [46]
+                0.00    0.00       2/19          malloc_pages [40]
+                                 445             malloc_bytes <cycle 1> [14]
+-----------------------------------------------
+                0.00    0.00      18/18          malloc_pages [40]
+[47]     0.0    0.00    0.00      18         map_pages [47]
+                0.00    0.00      19/20          sbrk [64]
+-----------------------------------------------
+                0.00    0.00       1/2           sysconf [50]
+                0.00    0.00       1/2           _mcleanup [45]
+[48]     0.0    0.00    0.00       2         sysctl [48]
+                0.00    0.00       2/2           __sysctl [233]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init [31]
+[49]     0.0    0.00    0.00       1         mmap [49]
+                0.00    0.00       1/1           __syscall [236]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init [31]
+[50]     0.0    0.00    0.00       1         sysconf [50]
+                0.00    0.00       1/2           sysctl [48]
+-----------------------------------------------
+                0.00    0.00       1/1           isatty [41]
+[51]     0.0    0.00    0.00       1         tcgetattr [51]
+                0.00    0.00       1/1           ioctl [71]
+-----------------------------------------------
+                                                 <spontaneous>
+[52]     0.0    0.00    0.00                 moncontrol [52]
+                0.00    0.00       1/1           profil [75]
+-----------------------------------------------
+                0.00    0.00       3/3           __srefill [28]
+[53]     0.0    0.00    0.00       3         __sread [53]
+                0.00    0.00       3/3           read [66]
+-----------------------------------------------
+                0.00    0.00       2/2           __smakebuf [24]
+[54]     0.0    0.00    0.00       2         __swhatbuf [54]
+                0.00    0.00       2/2           __fstat13 [232]
+-----------------------------------------------
+                0.00    0.00       1/1           getenv [37]
+[55]     0.0    0.00    0.00       1         __findenv [55]
+                0.00    0.00      19/19          strncmp [65]
+-----------------------------------------------
+                0.00    0.00       1/1           fclose [33]
+[56]     0.0    0.00    0.00       1         __sclose [56]
+                0.00    0.00       1/1           close [70]
+-----------------------------------------------
+                                                 <spontaneous>
+[57]     0.0    0.00    0.00                 __cerror [57]
+                0.00    0.00       2/4           __errno [229]
+-----------------------------------------------
+                0.00    0.00    1159/1159        sort_quicksort [15]
+[58]     0.0    0.00    0.00    1159         swap_lines [58]
+-----------------------------------------------
+                                   4             free_pages <cycle 2> [19]
+                                  32             free_bytes <cycle 2> [60]
+                0.00    0.00       2/424         irealloc [22]
+                0.00    0.00     422/424         free [20]
+[59]     0.0    0.00    0.00     460         ifree <cycle 2> [59]
+                                 443             free_bytes <cycle 2> [60]
+                                  17             free_pages <cycle 2> [19]
+-----------------------------------------------
+                                 443             ifree <cycle 2> [59]
+[60]     0.0    0.00    0.00     443         free_bytes <cycle 2> [60]
+                                  32             ifree <cycle 2> [59]
+-----------------------------------------------
+                0.00    0.00     419/419         accumulate_lines [4]
+[61]     0.0    0.00    0.00     419         data_pushline [61]
+-----------------------------------------------
+                0.00    0.00     419/419         puts [8]
+[62]     0.0    0.00    0.00     419         strlen [62]
+-----------------------------------------------
+                0.00    0.00     274/274         sort_quicksort [15]
+[63]     0.0    0.00    0.00     274         select_pivot [63]
+-----------------------------------------------
+                0.00    0.00       1/20          malloc_init [31]
+                0.00    0.00      19/20          map_pages [47]
+[64]     0.0    0.00    0.00      20         sbrk [64]
+-----------------------------------------------
+                0.00    0.00      19/19          __findenv [55]
+[65]     0.0    0.00    0.00      19         strncmp [65]
+-----------------------------------------------
+                0.00    0.00       3/3           __sread [53]
+[66]     0.0    0.00    0.00       3         read [66]
+-----------------------------------------------
+                0.00    0.00       1/1           __cxa_atexit [42]
+[67]     0.0    0.00    0.00       1         atexit_handler_alloc [67]
+-----------------------------------------------
+                0.00    0.00       1/1           accumulate_lines [4]
+[68]     0.0    0.00    0.00       1         buffer_pending [68]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[69]     0.0    0.00    0.00       1         cl_args_validate [69]
+-----------------------------------------------
+                0.00    0.00       1/1           __sclose [56]
+[70]     0.0    0.00    0.00       1         close [70]
+-----------------------------------------------
+                0.00    0.00       1/1           tcgetattr [51]
+[71]     0.0    0.00    0.00       1         ioctl [71]
+-----------------------------------------------
+                0.00    0.00       1/1           _mcleanup [45]
+[72]     0.0    0.00    0.00       1         issetugid [72]
+-----------------------------------------------
+                0.00    0.00       1/1           __sfp [35]
+[73]     0.0    0.00    0.00       1         memset [73]
+-----------------------------------------------
+                0.00    0.00       1/1           fopen [3]
+[74]     0.0    0.00    0.00       1         open [74]
+-----------------------------------------------
+                0.00    0.00       1/1           moncontrol [52]
+[75]     0.0    0.00    0.00       1         profil [75]
+-----------------------------------------------
+                0.00    0.00       1/1           malloc_init [31]
+[76]     0.0    0.00    0.00       1         readlink [76]
+-----------------------------------------------
+                0.00    0.00       1/32724       fclose [33]
+                0.00    0.00     419/32724       puts [8]
+                0.00    0.00   32304/32724       fgetc [5]
+[226]    0.0    0.00    0.00   32724         __funlockfile_internal [226]
+-----------------------------------------------
+                0.00    0.00      17/17          __sinit [44]
+[227]    0.0    0.00    0.00      17         __libc_cond_init [227]
+-----------------------------------------------
+                0.00    0.00      17/17          __sinit [44]
+[228]    0.0    0.00    0.00      17         __libc_mutex_init [228]
+-----------------------------------------------
+                0.00    0.00       2/4           malloc_init [31]
+                0.00    0.00       2/4           __cerror [57]
+[229]    0.0    0.00    0.00       4         __errno [229]
+-----------------------------------------------
+                0.00    0.00       2/4           getenv [37]
+                0.00    0.00       2/4           __sfp [35]
+[230]    0.0    0.00    0.00       4         __libc_rwlock_rdlock [230]
+-----------------------------------------------
+                0.00    0.00       1/3           __cxa_finalize [43]
+                0.00    0.00       2/3           __cxa_atexit [42]
+[231]    0.0    0.00    0.00       3         __libc_mutex_destroy [231]
+-----------------------------------------------
+                0.00    0.00       2/2           __swhatbuf [54]
+[232]    0.0    0.00    0.00       2         __fstat13 [232]
+-----------------------------------------------
+                0.00    0.00       2/2           sysctl [48]
+[233]    0.0    0.00    0.00       2         __sysctl [233]
+-----------------------------------------------
+                0.00    0.00       1/1           __cxa_finalize [43]
+[234]    0.0    0.00    0.00       1         __libc_thr_self [234]
+-----------------------------------------------
+                0.00    0.00       1/1           fopen [3]
+[235]    0.0    0.00    0.00       1         __sflags [235]
+-----------------------------------------------
+                0.00    0.00       1/1           mmap [49]
+[236]    0.0    0.00    0.00       1         __syscall [236]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+
+Index by function name
+
+  [42] __cxa_atexit           [34] buffer_cleanup         [16] malloc
+  [43] __cxa_finalize         [26] buffer_init            [14] malloc_bytes
+ [229] __errno                [68] buffer_pending         [31] malloc_init
+  [55] __findenv              [10] buffer_push            [36] malloc_make_chunks
+   [6] __flockfile_internal    [7] buffer_reset           [40] malloc_pages
+ [232] __fstat13              [32] cl_args_parse          [47] map_pages
+ [226] __funlockfile_internal [69] cl_args_validate       [11] memcpy
+ [227] __libc_cond_init       [70] close                  [73] memset
+ [231] __libc_mutex_destroy   [21] data_cleanup           [49] mmap
+ [228] __libc_mutex_init       [9] data_display           [74] open
+ [230] __libc_rwlock_rdlock   [27] data_init              [75] profil
+ [234] __libc_thr_self        [61] data_pushline           [8] puts
+  [56] __sclose                [2] data_read              [66] read
+ [235] __sflags               [25] data_shrink            [76] readlink
+  [35] __sfp                  [33] fclose                 [23] realloc
+  [12] __sfvwrite              [5] fgetc                  [64] sbrk
+  [44] __sinit                 [3] fopen                  [63] select_pivot
+  [24] __smakebuf             [20] free                   [15] sort_quicksort
+  [53] __sread                [60] free_bytes             [17] strcmp
+  [28] __srefill              [19] free_pages             [62] strlen
+  [29] __srget                [37] getenv                 [65] strncmp
+  [54] __swhatbuf             [59] ifree                  [58] swap_lines
+  [30] __swsetup              [46] imalloc                [50] sysconf
+ [236] __syscall              [71] ioctl                  [48] sysctl
+ [233] __sysctl               [22] irealloc               [51] tcgetattr
+   [4] accumulate_lines       [41] isatty                 [13] <cycle 1>
+  [67] atexit_handler_alloc   [72] issetugid              [18] <cycle 2>
