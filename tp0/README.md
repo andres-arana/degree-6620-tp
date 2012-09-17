@@ -122,3 +122,16 @@ time de cada uno de estos archivos en un archivo generado en `build/perf/raw`
 La tarea `perf-analyze` ejecuta el script `perf/analyze.rb`, encargado de
 analizar todos los archivos que se encuentren en `build/perf/raw` y generar los
 CSV resumidos en `build/perf/analyzed`.
+
+### Profiling
+
+Para facilitar el profiling de la aplicación se agregaron las siguientes tareas:
+
+La tarea `prof` recompila el ejecutable con las opciones `-O0 -pg`, lo que
+habilita la colección de datos de profiling durante su ejecución. Cuando se
+ejecute el programa, se generará el archivo gmon.out, utilizado por `gprof`
+para analizar los tiempos de ejecución de cada función. Luego ejecuta el
+programa y acumula las estadísticas de datos en `build/prof/raw/quicks.out`.
+Finalmente utiliza el comando gprof para analizar los datos acumulados,
+generando un reporte detallado de ejecución en `build/prof/analyzed/quicks`
+

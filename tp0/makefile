@@ -52,6 +52,8 @@ prepare:
 	-mkdir -p build/perf
 	-mkdir -p build/perf/raw
 	-mkdir -p build/perf/analyzed
+	-mkdir -p build/prof/raw
+	-mkdir -p build/prof/analyzed
 
 clean:
 	rm -rf build tags
@@ -77,4 +79,10 @@ perf-data: build
 
 perf-analyze:
 	ruby perf/analyze.rb
+
+prof: clean
+	ACFLAGS="-O0 -pg" make
+	cat perf/data/32k_rnd_sl | ./build/tp0 -q > /dev/null
+	mv gmon.out build/prof/raw/quicks.out
+	gprof build/tp0 build/prof/raw/quicks.out > build/prof/analyzed/quicks
 
