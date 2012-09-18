@@ -150,20 +150,20 @@ $LC3:
 	.globl	buffer_reset
 	.ent	buffer_reset
 buffer_reset:
-	.frame	$fp,56,$31		# vars= 16, regs= 3/0, args= 16, extra= 8
+	.frame	$fp,48,$31		# vars= 8, regs= 3/0, args= 16, extra= 8
 	.mask	0xd0000000,-8
 	.fmask	0x00000000,0
 	.set	noreorder
 	.cpload	$25
 	.set	reorder
-	subu	$sp,$sp,56
+	subu	$sp,$sp,48
 	.cprestore 16
-	sw	$31,48($sp)
-	sw	$fp,44($sp)
-	sw	$28,40($sp)
+	sw	$31,40($sp)
+	sw	$fp,36($sp)
+	sw	$28,32($sp)
 	move	$fp,$sp
-	sw	$4,56($fp)
-	lw	$2,56($fp)
+	sw	$4,48($fp)
+	lw	$2,48($fp)
 	lw	$2,8($2)
 	addu	$2,$2,1
 	move	$4,$2
@@ -177,47 +177,31 @@ buffer_reset:
 	la	$6,$LC3
 	la	$25,fprintf
 	jal	$31,$25
-	sw	$0,32($fp)
+	sw	$0,28($fp)
 	b	$L22
 $L23:
-	sw	$0,28($fp)
-$L24:
-	lw	$2,56($fp)
-	lw	$3,28($fp)
-	lw	$2,8($2)
-	sltu	$2,$3,$2
-	bne	$2,$0,$L27
-	b	$L25
-$L27:
-	lw	$3,24($fp)
-	lw	$2,28($fp)
-	addu	$4,$3,$2
-	lw	$2,56($fp)
-	lw	$3,0($2)
-	lw	$2,28($fp)
-	addu	$2,$3,$2
-	lbu	$2,0($2)
-	sb	$2,0($4)
-	lw	$2,28($fp)
-	addu	$2,$2,1
-	sw	$2,28($fp)
-	b	$L24
-$L25:
-	lw	$2,56($fp)
+	lw	$2,48($fp)
+	lw	$3,48($fp)
+	lw	$4,24($fp)
+	lw	$5,0($2)
+	lw	$6,8($3)
+	la	$25,memcpy
+	jal	$31,$25
+	lw	$2,48($fp)
 	lw	$3,24($fp)
 	lw	$2,8($2)
 	addu	$2,$3,$2
 	sb	$0,0($2)
-	lw	$2,56($fp)
+	lw	$2,48($fp)
 	sw	$0,8($2)
 	lw	$2,24($fp)
-	sw	$2,32($fp)
+	sw	$2,28($fp)
 $L22:
-	lw	$2,32($fp)
+	lw	$2,28($fp)
 	move	$sp,$fp
-	lw	$31,48($sp)
-	lw	$fp,44($sp)
-	addu	$sp,$sp,56
+	lw	$31,40($sp)
+	lw	$fp,36($sp)
+	addu	$sp,$sp,48
 	j	$31
 	.end	buffer_reset
 	.size	buffer_reset, .-buffer_reset

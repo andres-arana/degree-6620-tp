@@ -156,24 +156,16 @@ buffer_reset:
 	movl	$0, %eax
 	jmp	.L10
 .L9:
-	movl	$0, -16(%ebp)
-	jmp	.L11
-.L12:
-	movl	-16(%ebp), %eax
-	addl	-12(%ebp), %eax
-	movl	8(%ebp), %edx
-	movl	(%edx), %ecx
-	movl	-16(%ebp), %edx
-	addl	%ecx, %edx
-	movzbl	(%edx), %edx
-	movb	%dl, (%eax)
-	addl	$1, -16(%ebp)
-.L11:
-	movl	-16(%ebp), %edx
 	movl	8(%ebp), %eax
-	movl	8(%eax), %eax
-	cmpl	%eax, %edx
-	jb	.L12
+	movl	8(%eax), %ecx
+	movl	8(%ebp), %eax
+	movl	(%eax), %eax
+	movl	%eax, %edx
+	movl	-12(%ebp), %eax
+	movl	%ecx, 8(%esp)
+	movl	%edx, 4(%esp)
+	movl	%eax, (%esp)
+	call	memcpy
 	movl	8(%ebp), %eax
 	movl	8(%eax), %eax
 	addl	-12(%ebp), %eax

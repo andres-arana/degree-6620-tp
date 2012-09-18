@@ -50,7 +50,6 @@ int buffer_push(struct buffer_t* buffer, char c) {
  */
 char* buffer_reset(struct buffer_t* buffer) {
   char* result;
-  int i;
 
   /* Se alloca y se copia lo que hay en el buffer hasta el momento */
   result = malloc(sizeof(char) * buffer->current + 1);
@@ -59,9 +58,7 @@ char* buffer_reset(struct buffer_t* buffer) {
     LOG_ERROR("Not enough memory for line buffer reset");
     return 0;
   }
-  for (i = 0; i < buffer->current; i++) {
-    result[i] = buffer->buffer[i];
-  }
+  memcpy(result, buffer->buffer, sizeof(char) * buffer->current);
   result[buffer->current] = '\0';
 
   /* Se resetea el buffer para seguir acumulando chars */
