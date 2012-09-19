@@ -1,0 +1,11 @@
+test
+
+case_1: informacion de help
+case_2: informacion de version
+case_3: validacion de que help y version no se pueden pedir
+case_4: correr un archivo de texto chico de test con algoritmo stoogesort
+case_5: correr un archivo de texto chico de test con algoritmo quicksort
+case_6: correr un archivo binario chico de test con algoritmo stoogesort
+case_7: correr un archivo binario chico de test con algoritmo quicksort
+case_8: correr todos los archivos de texto dentro de test/ con algoritmo de stoogesort
+case_9: correr todos los archivos de texto dentro de test/ con algoritmo de quicksort
