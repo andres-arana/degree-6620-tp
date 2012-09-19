@@ -133,4 +133,4 @@ doc-preview: doc
 	evince build/doc/informe.pdf
 
 testdata:
-	for x in test/case_*; do ./$$x; RESULT=$$?; if [ $$RESULT -ne 0 ]; then echo; echo; echo "***********************************"; echo "[TEST] -----> BUILD NOT SUCCESSFULL "; echo "***********************************"; break; fi; done
+	SUCCESS=1; for x in test/case_*; do ./$$x; RESULT=$$?; if [ $$RESULT -ne 0 ]; then SUCCESS=0; echo; echo; echo "***********************************"; echo "[TEST] -----> BUILD NOT SUCCESSFULL "; echo "***********************************"; break; fi; done; if [ $$SUCCESS -eq 1 ]; then echo; echo; echo "*******************************"; echo "[TEST] -----> BUILD SUCCESSFULL "; echo "*******************************"; fi
