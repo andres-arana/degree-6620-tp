@@ -114,6 +114,12 @@ contenidos de la carpeta `source` al mismo directorio de la máquina virtual.
 La tarea `virtual-connect` abre una conexión por ssh a la máquina virtual.
 Nuevamente, es necesario primero habilitar el puerto de conexión.
 
+A modo de ejemplo, para subir todo el trabajo práctico a la virtual y
+posteriormente conectarse por ssh a la misma es necesario ejecutar el siguiente
+comando:
+
+    make virtual-deploy-all virtual-connect
+
 ### Análisis de performance
 
 Para facilitar el análisis de performance se agregaron dos tareas relacionadas.
@@ -124,7 +130,9 @@ time de cada uno de estos archivos en un archivo generado en `build/perf/raw`
 
 La tarea `perf-analyze` ejecuta el script `perf/analyze.rb`, encargado de
 analizar todos los archivos que se encuentren en `perf/times` y generar los
-CSV resumidos en `build/perf/analyzed`.
+archivos resumidos en `build/perf/analyzed`. Por un lado, genera tablas de los
+tiempos promediados de ejecución de cada situación analizada. Por el otro, se
+generan gráficos de los datos analizados en `build/doc`.
 
 ### Profiling
 
@@ -147,7 +155,7 @@ archivos fuente en el directorio `build/asm/`.
 La generación del informe final en PDF se realiza a través de la tarea `doc`.
 Esta compila el `README.md`, generando una versión en PDF para su inclusión en
 el informe final, y luego compila el fuente latex en `docs/informe.tex` y
-genera el pdf final en `build/doc/informe.pdf. 
+genera el pdf final en `build/doc/informe.pdf`.
 
 Se incluye además una tarea `doc-preview`, que regenera el informe y abre el
 visor de documentos evince para poder previsualizar cómo queda el mismo.

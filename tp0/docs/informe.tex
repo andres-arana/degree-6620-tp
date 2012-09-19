@@ -6,7 +6,8 @@
 
 % Gráficos complejos
 \usepackage{graphicx}
-\usepackage{subfig}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{placeins}
 
 % Soporte para el lenguaje español
@@ -24,6 +25,9 @@
 
 % Matemáticos
 \usepackage{amssymb,amsmath}
+
+% Tablas complejas
+\usepackage{multirow}
 
 % Formato de párrafo
 \setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
@@ -60,6 +64,7 @@
 \maketitle
 
 \begin{abstract}
+
   Este informe sumariza el desarrollo del trabajo práctico 0 de la materia
   Organización de Computadoras (66.20) dictada en el segundo cuatrimestre de
   2012 en la Facultad de Ingeniería de la Universidad de Buenos Aires. El mismo
@@ -68,6 +73,7 @@
   generación de un entorno de infraestructura básica para soportar el
   desarrollo de estas tareas que será reutilizado en futuros trabajos
   prácticos.
+
 \end{abstract}
 
 \clearpage
@@ -111,11 +117,13 @@ características se pueden resumir en dos propiedades que debe cumplir un
 algoritmo para ser considerado un algoritmo de ordenamiento:
 
 \begin{enumerate}
+
   \item La salida del algoritmo es una secuencia de elementos en orden
     no-decreciente (cada elemento no es menor que el elemento anterior, de
     acuerdo al orden definido).
 
   \item La salida del algoritmo es una permutación de la entrada del mismo.
+
 \end{enumerate}
 
 Tanto \textit{quicksort} como \textit{stoogesort} son algoritmos de
@@ -130,7 +138,7 @@ realiza \(O(n^2)\) comparaciones, la situación en la que esto ocurre es rara, y
 en la mayoría de los casos tiene un rendimiento mejor a muchos de los
 algoritmos que realizan en promedio \(O(n\log{n})\) comparaciones.
 
-\subsection{Stoogesort}
+\subsection{Stoogesort}\label{sec:introstooge}
 
 \textit{Stoogesort} es un algoritmo de ordenamiento extremadamente ineficiente
 en comparación con algoritmos de ordenamiento, con un orden de comparaciones de
@@ -141,24 +149,28 @@ pero inutilizable debido a su eficiencia.
 \section{Implementación}
 
 El software que resuelve el problema planteado en el enunciado (disponible en
-el anexo, en la sección \ref{sec:enunciado}) fue implementado íntegramente en
-C. El código fuente de la solución está disponible en el anexo, en la sección
-\ref{sec:source}.
+el anexo \ref{sec:enunciado}) fue implementado íntegramente en C. El código
+fuente de la solución está disponible en el anexo \ref{sec:source}.
 
 Decidimos dividir la implementación en los siguientes módulos:
 
 \begin{description}
+
   \item[Linea de comandos] Módulo encargado del procesamiento de los argumentos
     de la linea de comandos, incluyendo ayuda en linea, información de versión,
     validación de argumentos y otros mensajes requeridos por la especificación
     del enunciado.
+
   \item[Log] Módulo que provee servicios de log para depuramiento y alertas
     generales al resto de los módulos.
+
   \item[Adquisición de entrada] Módulo encargado de procesar los archivos de
     entrada y cargar las lineas de datos en una estructura para permitir su
     ordenamiento en memoria.
+
   \item[Ordenamiento] Módulo encargado de ordenar los datos de la estructura
     utilizando los diferentes algoritmos disponibles.
+
 \end{description}
 
 En las siguientes secciones detallaremos las decisiones de diseño que
@@ -176,13 +188,13 @@ pero sólamente cuando ciertos defines están disponibles en tiempo de
 compilación. En caso contrario, la invocación no se realiza, por lo que la
 ejecución de \textit{printf} no se compila siquiera.
 
-Esta técnica permite compilar el ejecutable con soporte para log on sin él de
+Esta técnica permite compilar el ejecutable con soporte para log o sin él de
 acuerdo a la configuración de ciertas variables de entorno, detalladas en la el
-README disponible en el apéndice, sección \ref{sec:readme}. Durante la
-depuración del ejecutable, los logs resultaron invaluables a la hora de
-corregir los problemas que surgían, particularmente en el entorno de emulación.
-Sin embargo, durante las mediciones de performance y perfilado, deshabilitamos
-la compilación de este módulo para evitar ruido en las mediciones.
+README disponible en el apéndice \ref{sec:readme}. Durante la depuración del
+ejecutable, los logs resultaron invaluables a la hora de corregir los problemas
+que surgían, particularmente en el entorno de emulación.  Sin embargo, durante
+las mediciones de performance y perfilado, deshabilitamos la compilación de
+este módulo para evitar ruido en las mediciones.
 
 \subsection{Adquisición de entrada}
 
@@ -200,12 +212,7 @@ estructura de datos compartida con los módulos de ordenamiento para luego
 continuar con la acumulación, hasta llegar al final de cada uno de los streams
 de entrada.
 
-Cabe destacar que, si bien este módulo es de los más complejos presentes en la
-solución, su ejecución depende \textbf{linealmente} con respecto a la cantidad
-de caracteres de los streams de entrada; es decir, su tiempo de ejecución es
-\(O(n)\).
-
-\subsection{Ordenamiento}
+\subsection{Ordenamiento}\label{sec:ord}
 
 Los dos algoritmos de ordenamiento desarrollados ordenan la estructura cargada
 por el módulo de adquisición de entrada. Particularmente, para
@@ -214,26 +221,266 @@ determinista, en el punto medio de la partición analizada. Si bien existen
 algoritmos mucho más complejos para una determinación de pivot que evite los
 peores casos de ejecución del algoritmo, no nos parecio relevante al estudio
 planteado en el trabajo práctico implementar un algoritmo de selección de este
-tipo.
+tipo. Por otro lado, el mecanismo implementado impide alcanzar el peor caso de
+ejecución cuando la salida está ordenada o inversamente ordenada, por lo que
+constituye una elección de compromiso sensible.
 
-\section{Entorno de emulación MIPS}
+\section{Análisis de tiempos de ejecución}
 
-\section{Análisis de performance}
+En las siguientes secciones detallaremos el proceso de análisis de tiempo de
+ejecución realizado para los diferentes casos contemplados.
+
+\subsection{Análisis previo}\label{sec:tiempos}
+
+Para realizar el análisis de tiempos de ejecución se decidió elaborar un
+conjunto de archivos de entrada para los cuales el tiempo de ejecución sería
+medido. Se determinaron los siguientes criterios para generar los diferentes
+experimentos a medir:
+
+\begin{description}
+
+  \item[Tamaño] Tanto los algoritmos de ordenamiento como el módulo
+    de adquisición de entrada son sensibles al tamaño del archivo a ordenar. Se
+    espera por lo tanto que a mayor tamaño aumenten los tiempos de ejecución.
+
+  \item[Cantidad de lineas] Nuevamente, los algoritmos de ordenamiento son
+    altamente sensibles a la cantidad de elementos a ordenar. Se espera que a
+    mayor cantidad de lineas mayor sea el tiempo de ejecución del experimento.
+
+  \item[Ordenamiento] Existe una dependencia entre el tiempo de ejecución de
+    los algoritmos con el modo de ordenamiento de la entrada, es decir, si la
+    entrada esta ordenada, inversamente ordenada o mezclada aleatoriamente. De
+    acuerdo a la elección de la implementación del algoritmo \textit{quicksort}
+    detallada en la sección \ref{sec:ord}, no se esperan grandes variaciones en
+    los tiempos de ejecución para este algoritmo en este aspecto. Sin embargo
+    \textit{stoogesort} es algo más lento en el caso de una entrada
+    inversamente ordenada, por lo que se espera una diferencia apreciable de
+    velocidad de ejecución para este caso.
+
+\end{description}
+
+\subsection{Generación de datos de entrada}
+
+Se generaron archivos de texto base de 1\(Kb\), 8\(Kb\), 16\(Kb\) y
+32\(Kb\). Para cada uno de esos archivos de texto se generaron 3 variantes
+ordenadas según diferentes criterios:
+
+\begin{enumerate}
+  \item Ordenado con el comando `sort`.
+  \item Ordenado inversamente con el comando `sort -r`.
+  \item Mezclado aleatoriamente con el comando `sort -R`.
+\end{enumerate}
+
+Por último, se duplicaron todos los archivos generados introduciendo para cada
+archivo una variante de lineas cortas. Estos archivos son idénticos en
+contenido a los archivos originales, sólo que se procesaron un el comando
+\textit{sed} \cite{WIKISED} para dividir las lineas largas del archivo original
+en lineas de menos de 80 caracteres. De esta forma, se altera la cantidad de
+lineas disponibles sin alterar el tamaño total del archivo.
+
+De esta manera, se generaron en total 24 archivos distintos, cada uno
+constituyendo un experimento diferente para cada uno de los parámetros
+detallados en la sección \ref{sec:tiempos}.
+
+\subsection{Mediciones}
+
+Sin realizar un modelo probabilístico detallado, se decidió ejecutar cada uno
+de los experimentos 10 veces, y tomar como valor del tiempo de ejecución el
+promedio de todas las mediciones realizadas en cada uno de ellos. Se implementó
+un pequeño script de \textit{bash} \cite{WIKIBASH} para tomar las mediciones y
+registrar los tiempos de ejecución en cada una de ellas, y luego un script de
+\textit{ruby} \cite{WIKIRUBY} para procesar todos los tiempos de ejecución y
+generar los promedios de ejecución de cada experimento.
+
+En el cuadro \ref{tab:medicionesquick} se puede observar como se comprueba que
+aumenta el tiempo de ejecución a medida que aumenta el tamaño del archivo
+procesado. Por otro lado, también hay un aumento en el tiempo de ejecución
+cuando aumenta la cantidad de lineas: al disminuir la longitud promedio de las
+lineas aumenta la cantidad de lineas que hay para un mismo tamaño y por
+consiguiente aumenta el tiempo de ejecución.
+
+\begin{table}[h!t]
+\centering
+\begin{tabular}{ | l | r | r | r |r | }
+  \hline
+  Longitud de lineas           & Tamaño \(Kb\) & Ordenado (s) & Inverso (s) & Mezcla (s) \\ \hline
+   \multirow{4}{*}{Largas}     & 1             & 0.03340      & 0.03460     & 0.03340 \\
+                               & 8             & 0.05360      & 0.05440     & 0.05590 \\
+                               & 16            & 0.08080      & 0.08200     & 0.08200 \\
+                               & 32            & 0.12980      & 0.13060     & 0.12940 \\ \hline
+  \multirow{4}{*}{Cortas}      & 1             & 0.03420      & 0.03460     & 0.03300 \\
+                               & 8             & 0.06420      & 0.05830     & 0.06120 \\
+                               & 16            & 0.08360      & 0.08870     & 0.08760 \\
+                               & 32            & 0.13870      & 0.13570     & 0.13950 \\
+  \hline
+\end{tabular}
+\caption{Medición de tiempos de ejecución para cada experimento con el algoritmo \textit{quicksort}}
+\label{tab:medicionesquick}
+\end{table}
+
+Por otro lado, en la figura \ref{fig:medicionesquick} se graficaron las
+progresiones de los tiempos de ejecución para estos experimentos. Se observa
+una relación superlineal entre el tiempo de ejecución y el tamaño del archivo
+sin importar el tipo de ordenamiento, lo que confirma el supuesto realizado en
+la sección \ref{sec:tiempos}.
+
+\begin{figure}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{build/doc/quicks_ll.png}
+    \caption{Lineas largas}
+  \end{subfigure}%
+
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{build/doc/quicks_sl.png}
+    \caption{Lineas cortas}
+  \end{subfigure}
+  \caption{Tiempos de ejecución para \textit{quicksort}}\label{fig:medicionesquick}
+\end{figure}
+
+\FloatBarrier
+
+En el caso de \textit{stoogesort}, cuyos resultados están sumarizados en el
+cuadro \ref{tab:medicionesstooge}, nuevamente se observa claramente el mismo
+efecto de los tamaños del archivo y cantidad de lineas sobre el tiempo de
+ejecución. Esta vez el efecto es mucho más pronunciado, debido a la
+ineficiencia inherente al algoritmo.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ | l | r | r | r |r | }
+  \hline
+  Longitud de lineas            & Tamaño \(Kb\) & Ordenado (s) & Inverso (s) & Mezcla (s) \\ \hline
+   \multirow{4}{*}{Largas}      & 1             & 0.03610      & 0.03930     & 0.03890 \\
+                                & 8             & 0.09670      & 0.09680     & 0.09390 \\
+                                & 16            & 0.49500      & 0.49280     & 0.47390 \\
+                                & 32            & 3.56190      & 3.90910     & 3.35940 \\ \hline
+  \multirow{4}{*}{Cortas}       & 1             & 0.03970      & 0.03890     & 0.03690 \\
+                                & 8             & 0.37380      & 0.36820     & 0.36940 \\
+                                & 16            & 1.97010      & 1.95400     & 1.93430 \\
+                                & 32            & 9.29510      & 10.14080    & 8.89030 \\
+  \hline
+\end{tabular}
+\caption{Medición de tiempos de ejecución para cada experimento con el algoritmo \textit{stoogesort}}
+\label{tab:medicionesstooge}
+\end{table}
+
+En la figura \ref{fig:medicionesstooge} observamos, como lo habíamos anticipado
+en la sección \ref{sec:introstooge}, una relación supercuadrática entre la
+variación del tamaño y el tiempo de ejecución del programa. También se puede
+observar el efecto que mencionamos en la sección \ref{sec:tiempos} con respecto
+a la diferencia apreciable al ordenar archivos preordenados inversamente.
+
+\begin{figure}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{build/doc/stooge_ll.png}
+    \caption{Lineas largas}
+  \end{subfigure}%
+
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{build/doc/stooge_sl.png}
+    \caption{Lineas cortas}
+  \end{subfigure}
+  \caption{Tiempos de ejecución para \textit{stoogesort}}\label{fig:medicionesstooge}
+\end{figure}
+
+Por último, en la figura \ref{fig:speedup} se grafica el speed up total
+obtenido al utilizar \textit{quicksort} sobre \textit{stoogesort}. Se observa
+una relación superlineal entre el tamaño y el speedup, cercano a un
+comportamiento cuadrático.
+
+\begin{figure}
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{build/doc/speed_ll.png}
+    \caption{Lineas largas}
+  \end{subfigure}%
+
+  \begin{subfigure}[b]{\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{build/doc/speed_sl.png}
+    \caption{Lineas cortas}
+  \end{subfigure}
+  \caption{Speed up total al utilizar \textit{quicksort} por sobre \textit{stoogesort}}\label{fig:speedup}
+\end{figure}
+
+\FloatBarrier
 
 \section{Profiling de ejecución}
 
+Se decidió realizar el perfilado del programa para el algoritmo
+\textit{quicksort}. Se realizó el perfilado utilizando un archivo mezclado de
+aproximadamente \(1Mb\). Debido a que el \textit{gprof} toma valores
+estadísticos (como el promedio del tiempo de ejecución de cada llamada)
+decidimos que era conveniente ejecutar el programa con un archivo relativamente
+grande para contar con un espacio de muestras que disminuya el error de
+muestreo.
+
+La salida de \textit{gprof} en la que basamos nuestro análisis fue adjuntada al
+presente trabajo práctico, en el anexo \ref{sec:gprof}.
+
+En nuestro análisis de lo indicado por la herramienta descubrimos que, incluso
+para este tamaño de archivo, el tiempo de ejecución era mayoritariamente
+dominado por las funciones de entrada-salida. La llamada a \textit{fopen} que
+se realiza al iniciar el procesamiento del archivo toma casi la mitad del
+tiempo de ejecuión, junto con las llamadas a los \textit{fgetc} y la lógica de
+acumulación de caracteres en \textit{buffer\_push}. Si hubiera que optimizar una
+sección del código desarrollado por nosotros, la acumulación de lineas sería un
+candidato ideal para la optimización, llevandose el 12\% del tiempo de
+ejecución.
+
+En particular, se podría reimplementar el módulo de adquisición de datos para
+utilizar buffering de entrada, leyendo una cantidad relativamente grande de
+bytes en cada llamada y procesando cada caracter desde el buffer, en vez de
+invocar directamente a \textit{fgetc}. O incluso cambiar la lógica de búsqueda
+de los caracteres de retorno de linea utilizando la función estándar
+\textit{strtok}. Existen varias posibilidades a implementar, dependiendo del
+speed up que se quiera obtener y balanceando las decisiones con el costo de
+implementarlas.
+
+Por otro lado, si nos remitimos únicamente al algoritmo de ordenamiento en sí,
+la función de comparación que utilizamos es la que se lleva la mayor cantidad
+de tiempo, con un 2.04\% del tiempo de ejecución.
+
 \section{Conclusiones}
 
-TODO: Definir
+Durante el desarrollo del trabajo práctico utilizamos las herramientas
+\textit{time} y \textit{gprof} para analizar el comportamiento del ejecutable
+implementado. Nos familiarizamos con el uso de las mismas y construimos un
+entorno de análisis de ejecución simple pero efectivo, para completar la
+experiencia realizando un análisis relativamente completo del sistema
+estudiado.
+
+Particularmente, la herramienta de perfilado \textit{gprof} fue especialmente
+útil para entender los cuellos de botella en la ejecución del sistema. Lo
+utilizamos varias veces para depurar y optimizar algunas implementaciones
+subóptimas intermedias en las que trabajamos antes de llegar al sistema final
+aquí presentado, y nos sorprendió la cantidad y calidad de la información
+generada por la herramienta.
+
+Por otro lado, encontramos interesante la forma de trabajo planteada por el
+trabajo práctico. El ciclo de medir tiempos de ejecución, analizar las
+mediciones para encontrar patrones problemáticos y perfilar para hallar
+posibilidades de optimización nos pareció muy adecuado para la tarea, en
+particular teniendo en cuenta que la optimización prematura es causa de varios
+inconvenientes en el desarrollo de sistemas electrónicos e informáticos
+\cite{OPT}.
 
 \begin{thebibliography}{99}
 
-\bibitem{WIKISORT} Sort linux command, http://en.wikipedia.org/wiki/Sort\_(Unix)
-\bibitem{WIKIQS} Quicksort, http://en.wikipedia.org/wiki/Quicksort
-\bibitem{WIKIST} Stoogesort, http://en.wikipedia.org/wiki/Stooge\_sort
-\bibitem{WIKITIME} Time linux command, http://en.wikipedia.org/wiki/Time\_\%28Unix\%29
-\bibitem{GPROF} GNU gprof linux command, http://www.cs.utah.edu/dept/old/texinfo/as/gprof.html
-\bibitem{WIKIBUB} Bubblesort, http://en.wikipedia.org/wiki/Bubblesort
+\bibitem{WIKISORT} Sort, file sorting linux command, http://en.wikipedia.org/wiki/Sort\_(Unix)
+\bibitem{WIKIQS} Quicksort, fast sorting algorithm, http://en.wikipedia.org/wiki/Quicksort
+\bibitem{WIKIST} Stoogesort, inefficient sorting algorithm, http://en.wikipedia.org/wiki/Stooge\_sort
+\bibitem{WIKITIME} Time, execution time measurement linux command, http://en.wikipedia.org/wiki/Time\_(Unix)
+\bibitem{GPROF} GNU gprof, profiling utility for compiled executables, http://www.cs.utah.edu/dept/old/texinfo/as/gprof.html
+\bibitem{WIKIBUB} Bubblesort, simple sorting algorithm, http://en.wikipedia.org/wiki/Bubblesort
+\bibitem{WIKISED} Sed, stream editor linux command, http://en.wikipedia.org/wiki/Sed
+\bibitem{WIKIBASH} Bash, bourne again linux shell, http://en.wikipedia.org/wiki/Bash\_(Unix\_shell)
+\bibitem{WIKIRUBY} Ruby, dynamic, reflective general purpose language, http://en.wikipedia.org/wiki/Ruby\_(programming\_language)
+\bibitem{OPT} Knuth, Donald (December 1974). "Structured Programming with go to Statements". ACM Journal Computing Surveys 6 (4): 268.
 
 \end{thebibliography}
 
@@ -241,10 +488,28 @@ TODO: Definir
 
 \part{Apéndice}
 \appendix
-\section{README del material digital}\label{sec:readme}
 
+\section{Enunciado original}\label{sec:enunciado}
+\includepdf[pages={-}]{docs/enunciado.pdf}
+
+\clearpage
+\section{README del material digital}\label{sec:readme}
 \includepdf[pages={-}]{build/doc/README.pdf}
 
+\clearpage
+\section{Salida de gprof}\label{sec:gprof}
+\clearpage
+\lstset{
+  basicstyle=\footnotesize,
+  showspaces=false,
+  showstringspaces=false,
+  breaklines=true,
+  frame=single
+}
+
+\lstinputlisting{prof/results}
+
+\clearpage
 \section{Código fuente}\label{sec:source}
 \clearpage
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -276,10 +541,5 @@ TODO: Definir
 \lstinputlisting{source/stooge.h}
 \lstinputlisting{source/stooge.c}
 \lstinputlisting{source/tp0.c}
-
-
-\section{Enunciado original}\label{sec:enunciado}
-
-\includepdf[pages={-}]{docs/enunciado.pdf}
 
 \end{document}

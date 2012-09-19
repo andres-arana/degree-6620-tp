@@ -123,7 +123,7 @@ prof: clean
 
 asm: prepare $(ASM)
 
-doc: prepare
+doc: prepare perf-analyze
 	pandoc README.md -o build/doc/README.pdf
 	pdflatex --output-directory build/doc docs/informe.tex
 	pdflatex --output-directory build/doc docs/informe.tex
