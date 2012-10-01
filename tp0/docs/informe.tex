@@ -452,27 +452,41 @@ comando \textit{make}.
 Primero compilamos el codigo fuente con el programa GNU Compiler Collection,
 siendo el comando conocido como \textit{gcc}. Los argumentos pasados por
 parametro indican lo siguiente:
-\textit{-c} Compila o ensambla el código fuente pero no corre el linker.
+\begin{description}
+  \item[-c] Compila o ensambla el código fuente pero no corre el linker.
 Por lo tanto la última salida corresponde a un archivo objeto por cada archivo
 fuente.
-\textit{-o} Nos permite especificar cual será el archivo de salida sea éste un
+  \item[-o] Nos permite especificar cual será el archivo de salida sea éste un
 archivo objeto, ejecutable, ensamblado o código preprocesado de C.
-\textit{-Wall} Activa todos los mensajes de warning.
-\textit{-I} Agrega el directorio a la lista de directorios buscados por los 
+  \item[-Wall] Activa todos los mensajes de warning.
+  \item[-I] Agrega el directorio a la lista de directorios buscados por los 
 archivos header\(()*.h)\).
+\end{description}
 
-\(gcc -c -o build/obj/buffer.o source/buffer.c -I./source -Wall\)
-\(gcc -c -o build/obj/data.o source/data.c -I./source -Wall\)
-\(gcc -c -o build/obj/clargs.o source/clargs.c -I./source -Wall\)
-\(gcc -c -o build/obj/cltext.o source/cltext.c -I./source -Wall\)
-\(gcc -c -o build/obj/tp0.o source/tp0.c -I./source -Wall\)
-\(gcc -c -o build/obj/stooge.o source/stooge.c -I./source -Wall\)
-\(gcc -c -o build/obj/quicksort.o source/quicksort.c -I./source -Wall\)
+\begin{enumerate}
+  \item \(gcc -c -o build/obj/buffer.o source/buffer.c -I./source -Wall\)
+  \item \(gcc -c -o build/obj/data.o source/data.c -I./source -Wall\)
+  \item \(gcc -c -o build/obj/clargs.o source/clargs.c -I./source -Wall\)
+  \item \(gcc -c -o build/obj/cltext.o source/cltext.c -I./source -Wall\)
+  \item \(gcc -c -o build/obj/tp0.o source/tp0.c -I./source -Wall\)
+  \item \(gcc -c -o build/obj/stooge.o source/stooge.c -I./source -Wall\)
+  \item \(gcc -c -o build/obj/quicksort.o source/quicksort.c -I./source -Wall\)
+\end{enumerate}
 
 Linkeamos todos los archivos objeto generados e indicamos el arhcivo ejecutable
 \textit{build/tp0}.
 
-\(gcc -o build/tp0 build/obj/buffer.o build/obj/data.o build/obj/clargs.o build/obj/cltext.o build/obj/tp0.o build/obj/stooge.o build/obj/quicksort.o -I./source -Wall\)
+\begin{centering}
+  \(gcc -o  build/tp0 \)
+  \\\(build/obj/buffer.o\)
+  \\\(build/obj/data.o\)
+  \\\(build/obj/clargs.o\)
+  \\\(build/obj/cltext.o\)
+  \\\(build/obj/tp0.o\)
+  \\\(build/obj/stooge.o\)
+  \\\(build/obj/quicksort.o\)
+  \\\(-I./source -Wall\)
+\end{centering}
 
 Respecto de las indicaciones de compilación para visualizar el código generado por el
 ensamblador en \(MIPS\) es necesario agregar como parámetro la indicativa \textit{-S} 
@@ -482,13 +496,15 @@ el nombre del registro utilizado en caso de el número de registro. Y \textit{-O
 indicando el nivel de optimización aplicado por el compilador.
 En nuestro caso utilizamos las siguientes:
 
-\(gcc -S -o build/asm/buffer.s source/buffer.c\)
-\(gcc -S -o build/asm/data.s source/data.c\)
-\(gcc -S -o build/asm/clargs.s source/clargs.c\)
-\(gcc -S -o build/asm/cltext.s source/cltext.c\)
-\(gcc -S -o build/asm/tp0.s source/tp0.c\)
-\(gcc -S -o build/asm/stooge.s source/stooge.c\)
-\(gcc -S -o build/asm/quicksort.s source/quicksort.c\)
+\begin{enumerate}
+  \item \(gcc -S -o build/asm/buffer.s source/buffer.c\)
+  \item \(gcc -S -o build/asm/data.s source/data.c\)
+  \item \(gcc -S -o build/asm/clargs.s source/clargs.c\)
+  \item \(gcc -S -o build/asm/cltext.s source/cltext.c\)
+  \item \(gcc -S -o build/asm/tp0.s source/tp0.c\)
+  \item \(gcc -S -o build/asm/stooge.s source/stooge.c\)
+  \item \(gcc -S -o build/asm/quicksort.s source/quicksort.c\)
+\end{enumerate}
 
 \section{Conclusiones}
 
