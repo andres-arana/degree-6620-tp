@@ -132,5 +132,8 @@ doc: prepare perf-analyze
 doc-preview: doc
 	evince build/doc/informe.pdf
 
+doc-spell:
+	aspell -t check docs/informe.tex -d es
+
 testdata: tp0
 	SUCCESS=1; for x in test/case_*; do ./$$x; RESULT=$$?; if [ $$RESULT -ne 0 ]; then SUCCESS=0; echo; echo; echo "***********************************"; echo "[TEST] -----> BUILD NOT SUCCESSFULL "; echo "***********************************"; break; fi; done; if [ $$SUCCESS -eq 1 ]; then echo; echo; echo "*******************************"; echo "[TEST] -----> BUILD SUCCESSFULL "; echo "*******************************"; fi
