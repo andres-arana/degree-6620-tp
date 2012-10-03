@@ -219,11 +219,98 @@ por el módulo de adquisición de entrada. Particularmente, para
 \textit{quicksort}, decidimos utilizar una estrategia de selección de pivot
 determinista, en el punto medio de la partición analizada. Si bien existen
 algoritmos mucho más complejos para una determinación de pivot que evite los
-peores casos de ejecución del algoritmo, no nos parecio relevante al estudio
+peores casos de ejecución del algoritmo, no nos pareció relevante al estudio
 planteado en el trabajo práctico implementar un algoritmo de selección de este
 tipo. Por otro lado, el mecanismo implementado impide alcanzar el peor caso de
 ejecución cuando la salida está ordenada o inversamente ordenada, por lo que
 constituye una elección de compromiso sensible.
+
+\section{Compilación}
+
+Se instrumentó un \textit{makefile} \cite{WIKIMAKE} para ejecutar las
+instrucciones adecuadas de compilación para los distintos escenarios
+requeridos.
+
+\subsection{Ejecutable}
+
+En el caso de la compilación del ejecutable final del trabajo práctico, la
+tarea \textit{make} compila individualmente cada uno de los archivos fuente de
+extensión \textit{c} a través del ejecutable \textit{gcc} \cite{WIKIGCC}. Los
+comandos utilizados para compilar cada uno de estos archivos fuente son los
+siguientes:
+
+\begin{lstlisting}
+gcc -c -o build/obj/buffer.o source/buffer.c -I./source -Wall
+gcc -c -o build/obj/data.o source/data.c -I./source -Wall
+gcc -c -o build/obj/clargs.o source/clargs.c -I./source -Wall
+gcc -c -o build/obj/cltext.o source/cltext.c -I./source -Wall
+gcc -c -o build/obj/tp0.o source/tp0.c -I./source -Wall
+gcc -c -o build/obj/stooge.o source/stooge.c -I./source -Wall
+gcc -c -o build/obj/quicksort.o source/quicksort.c -I./source -Wall
+\end{lstlisting}
+
+De este listado, cada una de las invocaciones obedece a la siguiente estructura
+de argumentos:
+
+\begin{description}
+
+  \item[-c] Compila o ensambla el código fuente pero no corre el linker.  Por
+    lo tanto la salida corresponde a un archivo objeto por cada archivo fuente.
+
+  \item[-o] Especifica cual será el archivo de salida sea éste un archivo
+    objeto, ejecutable, ensamblado o código preprocesado de C.
+
+  \item[-Wall] Activa todos los mensajes de warning.
+
+  \item[-I] Agrega el directorio especificado a la lista de directorios
+    buscados para los archivos header.
+
+\end{description}
+
+El resultado de la ejecución de estos comandos es que se generan archivos
+objeto para cada fuente, listos para ser linkeados, en el directorio
+\textit{build/obj}. Para realizar este último paso, se invoca nuevamente a
+\textit{gcc} con un último comando:
+
+\begin{lstlisting}
+gcc -o build/tp0 \
+  build/obj/buffer.o build/obj/data.o \
+  build/obj/clargs.o build/obj/cltext.o \
+  build/obj/tp0.o build/obj/stooge.o build/obj/quicksort.o
+\end{lstlisting}
+
+El comando linkea todos los archivos objeto en un ejecutable final,
+\textit{build/tp0}.
+
+\subsection{Código de ensamblador MIPS}
+
+En uno de los puntos del trabajo práctico, se pide visualizar el código en
+ensamblador generado por el compilador en una arquitectura MIPS para el trabajo
+práctico. Para completar esta tarea, se utiliza un comando utilizando
+nuevamente \textit{gcc} que compila cada uno de los fuentes del trabajo
+práctico, pero detiene el pipeline de compilación al generar el código de
+ensamblador de cada uno de ellos. Los comandos correspondientes son los
+siguientes:
+
+\begin{lstlisting}
+gcc -S -o build/obj/buffer.s source/buffer.c
+gcc -S -o build/obj/data.s source/data.c
+gcc -S -o build/obj/clargs.s source/clargs.c
+gcc -S -o build/obj/cltext.s source/cltext.c
+gcc -S -o build/obj/tp0.s source/tp0.c
+gcc -S -o build/obj/stooge.s source/stooge.c
+gcc -S -o build/obj/quicksort.s source/quicksort.c
+\end{lstlisting}
+
+En particular, el flag de compilación \textit{-S} es el que indica al
+compilador que debe detener el pipeline al generar el código ensamblador para
+el fuente compilado, de manera de que en el archivo indicado por \textit{-o} se
+obtiene el código ensamblador pedido.
+
+A modo informativo, existen indicativas opcionales como \textit{-mrnames}, que
+nos permite indicarle al compilador que nombre los registros utilizados en el
+código ensamblador en vez de numerarlos, y las indicativas \textit{-Ol}, con l
+entre 0 y 3, que indican al compilador el nivel de optimización a desarrollar.
 
 \section{Análisis de tiempos de ejecución}
 
@@ -445,67 +532,6 @@ Por otro lado, si nos remitimos únicamente al algoritmo de ordenamiento en sí,
 la función de comparación que utilizamos es la que se lleva la mayor cantidad
 de tiempo, con un 2.04\% del tiempo de ejecución.
 
-\section{Instrucciones del compilador}
-
-Las instrucciones del compilador las podemos ver al momento de ejecutar el
-comando \textit{make}.
-Primero compilamos el codigo fuente con el programa GNU Compiler Collection,
-siendo el comando conocido como \textit{gcc}. Los argumentos pasados por
-parametro indican lo siguiente:
-\begin{description}
-  \item[-c] Compila o ensambla el código fuente pero no corre el linker.
-Por lo tanto la última salida corresponde a un archivo objeto por cada archivo
-fuente.
-  \item[-o] Nos permite especificar cual será el archivo de salida sea éste un
-archivo objeto, ejecutable, ensamblado o código preprocesado de C.
-  \item[-Wall] Activa todos los mensajes de warning.
-  \item[-I] Agrega el directorio a la lista de directorios buscados por los 
-archivos header\(()*.h)\).
-\end{description}
-
-\begin{enumerate}
-  \item \(gcc -c -o build/obj/buffer.o source/buffer.c -I./source -Wall\)
-  \item \(gcc -c -o build/obj/data.o source/data.c -I./source -Wall\)
-  \item \(gcc -c -o build/obj/clargs.o source/clargs.c -I./source -Wall\)
-  \item \(gcc -c -o build/obj/cltext.o source/cltext.c -I./source -Wall\)
-  \item \(gcc -c -o build/obj/tp0.o source/tp0.c -I./source -Wall\)
-  \item \(gcc -c -o build/obj/stooge.o source/stooge.c -I./source -Wall\)
-  \item \(gcc -c -o build/obj/quicksort.o source/quicksort.c -I./source -Wall\)
-\end{enumerate}
-
-Linkeamos todos los archivos objeto generados e indicamos el arhcivo ejecutable
-\textit{build/tp0}.
-
-\begin{centering}
-  \(gcc -o  build/tp0 \)
-  \\\(build/obj/buffer.o\)
-  \\\(build/obj/data.o\)
-  \\\(build/obj/clargs.o\)
-  \\\(build/obj/cltext.o\)
-  \\\(build/obj/tp0.o\)
-  \\\(build/obj/stooge.o\)
-  \\\(build/obj/quicksort.o\)
-  \\\(-I./source -Wall\)
-\end{centering}
-
-Respecto de las indicaciones de compilación para visualizar el código generado por el
-ensamblador en \(MIPS\) es necesario agregar como parámetro la indicativa \textit{-S} 
-que detiene el compilador luego de generar el assembly.
-Existen indicativas opcionales tales como \textit{-mrnames} que nos permite conocer
-el nombre del registro utilizado en caso de el número de registro. Y \textit{-Olevel} 
-indicando el nivel de optimización aplicado por el compilador.
-En nuestro caso utilizamos las siguientes:
-
-\begin{enumerate}
-  \item \(gcc -S -o build/asm/buffer.s source/buffer.c\)
-  \item \(gcc -S -o build/asm/data.s source/data.c\)
-  \item \(gcc -S -o build/asm/clargs.s source/clargs.c\)
-  \item \(gcc -S -o build/asm/cltext.s source/cltext.c\)
-  \item \(gcc -S -o build/asm/tp0.s source/tp0.c\)
-  \item \(gcc -S -o build/asm/stooge.s source/stooge.c\)
-  \item \(gcc -S -o build/asm/quicksort.s source/quicksort.c\)
-\end{enumerate}
-
 \section{Conclusiones}
 
 Durante el desarrollo del trabajo práctico utilizamos las herramientas
@@ -542,6 +568,8 @@ inconvenientes en el desarrollo de sistemas electrónicos e informáticos
 \bibitem{WIKIBASH} Bash, bourne again linux shell, http://en.wikipedia.org/wiki/Bash\_(Unix\_shell)
 \bibitem{WIKIRUBY} Ruby, dynamic, reflective general purpose language, http://en.wikipedia.org/wiki/Ruby\_(programming\_language)
 \bibitem{OPT} Knuth, Donald (December 1974). "Structured Programming with go to Statements". ACM Journal Computing Surveys 6 (4): 268.
+\bibitem{WIKIMAKE} Make, automatic source code building utility, http://en.wikipedia.org/wiki/Makefile
+\bibitem{WIKIGCC} GCC, GNU Compiler Collection, http://en.wikipedia.org/wiki/GNU\_Compiler\_Collection
 
 \end{thebibliography}
 
