@@ -372,7 +372,7 @@ detallados en la sección \ref{sec:tiempos}.
 \subsection{Mediciones}
 
 Sin realizar un modelo probabilístico detallado, se decidió ejecutar cada uno
-de los experimentos 10 veces, y tomar como valor del tiempo de ejecución el
+de los experimentos 5 veces, y tomar como valor del tiempo de ejecución el
 promedio de todas las mediciones realizadas en cada uno de ellos. Se implementó
 un pequeño script de \textit{bash} \cite{WIKIBASH} para tomar las mediciones y
 registrar los tiempos de ejecución en cada una de ellas, y luego un script de
@@ -391,14 +391,14 @@ consiguiente aumenta el tiempo de ejecución.
 \begin{tabular}{ | l | r | r | r |r | }
   \hline
   Longitud de lineas           & Tamaño \(Kb\) & Ordenado (s) & Inverso (s) & Mezcla (s) \\ \hline
-   \multirow{4}{*}{Largas}     & 1             & 0.03340      & 0.03460     & 0.03340 \\
-                               & 8             & 0.05360      & 0.05440     & 0.05590 \\
-                               & 16            & 0.08080      & 0.08200     & 0.08200 \\
-                               & 32            & 0.12980      & 0.13060     & 0.12940 \\ \hline
-  \multirow{4}{*}{Cortas}      & 1             & 0.03420      & 0.03460     & 0.03300 \\
-                               & 8             & 0.06420      & 0.05830     & 0.06120 \\
-                               & 16            & 0.08360      & 0.08870     & 0.08760 \\
-                               & 32            & 0.13870      & 0.13570     & 0.13950 \\
+   \multirow{4}{*}{Largas}     & 1             & 0.03340      & 0.03500     & 0.03260 \\
+                               & 8             & 0.05560      & 0.06300     & 0.05560 \\
+                               & 16            & 0.08280      & 0.08360     & 0.09080 \\
+                               & 32            & 0.13460      & 0.14140     & 0.14360 \\ \hline
+  \multirow{4}{*}{Cortas}      & 1             & 0.03260      & 0.03100     & 0.03260 \\
+                               & 8             & 0.05560      & 0.05400     & 0.05780 \\
+                               & 16            & 0.09080      & 0.09320     & 0.08200 \\
+                               & 32            & 0.14360      & 0.14800     & 0.14660 \\
   \hline
 \end{tabular}
 \caption{Medición de tiempos de ejecución para cada experimento con el algoritmo \textit{quicksort}}
@@ -439,14 +439,14 @@ ineficiencia inherente al algoritmo.
 \begin{tabular}{ | l | r | r | r |r | }
   \hline
   Longitud de lineas            & Tamaño \(Kb\) & Ordenado (s) & Inverso (s) & Mezcla (s) \\ \hline
-   \multirow{4}{*}{Largas}      & 1             & 0.03610      & 0.03930     & 0.03890 \\
-                                & 8             & 0.09670      & 0.09680     & 0.09390 \\
-                                & 16            & 0.49500      & 0.49280     & 0.47390 \\
-                                & 32            & 3.56190      & 3.90910     & 3.35940 \\ \hline
-  \multirow{4}{*}{Cortas}       & 1             & 0.03970      & 0.03890     & 0.03690 \\
-                                & 8             & 0.37380      & 0.36820     & 0.36940 \\
-                                & 16            & 1.97010      & 1.95400     & 1.93430 \\
-                                & 32            & 9.29510      & 10.14080    & 8.89030 \\
+   \multirow{4}{*}{Largas}      & 1             & 0.03340      & 0.03580     & 0.03340 \\
+                                & 8             & 0.14220      & 0.14580     & 0.14000 \\
+                                & 16            & 1.18700      & 1.10640     & 1.02440 \\
+                                & 32            & 10.07200     & 10.61000    & 9.96600 \\ \hline
+  \multirow{4}{*}{Cortas}       & 1             & 0.03340      & 0.03260     & 0.03660 \\
+                                & 8             & 0.84460      & 0.81340     & 0.78040 \\
+                                & 16            & 3.34160      & 3.80680     & 3.62820 \\
+                                & 32            & 23.22600     & 25.47600    & 23.14000 \\
   \hline
 \end{tabular}
 \caption{Medición de tiempos de ejecución para cada experimento con el algoritmo \textit{stoogesort}}
@@ -513,11 +513,13 @@ En nuestro análisis de lo indicado por la herramienta descubrimos que, incluso
 para este tamaño de archivo, el tiempo de ejecución era mayoritariamente
 dominado por las funciones de entrada-salida. La llamada a \textit{fopen} que
 se realiza al iniciar el procesamiento del archivo toma casi la mitad del
-tiempo de ejecuión, junto con las llamadas a los \textit{fgetc} y la lógica de
-acumulación de caracteres en \textit{buffer\_push}. Si hubiera que optimizar una
-sección del código desarrollado por nosotros, la acumulación de lineas sería un
-candidato ideal para la optimización, llevandose el 12\% del tiempo de
-ejecución.
+tiempo de ejecuión, y junto con las llamadas a los \textit{fgetc} y la lógica
+de acumulación de caracteres en \textit{buffer\_push} dominan el tiempo de
+ejecución del programa.
+
+Si hubiera que optimizar una sección del código desarrollado por nosotros, la
+lógica de acumulación de lineas sería un candidato ideal para la optimización,
+llevandose el 18\% del tiempo de ejecución.
 
 En particular, se podría reimplementar el módulo de adquisición de datos para
 utilizar buffering de entrada, leyendo una cantidad relativamente grande de
@@ -529,8 +531,9 @@ speed up que se quiera obtener y balanceando las decisiones con el costo de
 implementarlas.
 
 Por otro lado, si nos remitimos únicamente al algoritmo de ordenamiento en sí,
-la función de comparación que utilizamos es la que se lleva la mayor cantidad
-de tiempo, con un 2.04\% del tiempo de ejecución.
+y particularmente a una única función dentro de este, la función de comparación
+que utilizamos es la que se lleva la mayor cantidad de tiempo, con un 13.62\%
+del tiempo de ejecución.
 
 \section{Conclusiones}
 
