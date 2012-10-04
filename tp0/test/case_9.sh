@@ -8,7 +8,11 @@ for file in test/*.txt
 do
   echo
   echo "[TEST] Procesando archivo $file"
-  build/tp0 -q $file;
+  test/exec_tp0.sh -q $file > /dev/null
+  if [ $? -ne 0 ]
+  then
+    exit 1;
+  fi
 done
 echo;
 echo "[TEST] Fueron corridos todos los archivos de test con algoritmo quicksort"

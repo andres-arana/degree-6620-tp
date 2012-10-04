@@ -4,4 +4,5 @@ echo
 echo "**************************************************************************"
 echo "[TEST] correr un archivo de texto chico de test con algoritmo de Quicksort"
 echo "**************************************************************************"
-build/tp0 -q test/short_lines.txt
+test/exec_tp0.sh -q test/short_lines.txt;
+exit $?;

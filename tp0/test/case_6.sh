@@ -4,4 +4,5 @@ echo
 echo "**************************************************************************"
 echo "[TEST] correr un archivo binario chico de test con algoritmo de stoogesort"
 echo "**************************************************************************"
-build/tp0 -s test/binary
+test/exec_tp0.sh -s test/binary > /dev/null
+exit $?;
