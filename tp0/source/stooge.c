@@ -1,6 +1,7 @@
 #include <string.h>
 #include "stooge.h"
 #include "config.h"
+#include "buffer.h"
 
 /*
  * Ver documentacion en el header
@@ -16,15 +17,8 @@ void sort_stooge(struct data_t* data, int start, int end) {
     LOG_SORT_DEBUG_IVAR(end);
   }
 
-  LOG_SORT_DEBUG_SVAR(data->table[start]);
-  LOG_SORT_DEBUG_SVAR(data->table[end]);
-
-  if (strcmp((data->table)[end], (data->table)[start]) < 0) {
-    char* temp = (data->table)[start];
-
-    LOG_SORT_DEBUG("line2 should be before line1");
-    (data->table)[start] = (data->table)[end];
-    (data->table)[end] = temp;
+  if (line_compare(data->table[end], data->table[start]) < 0) {
+    data_swap(data, start, end);
   }
 
   if (end - start + 1 >= 3) {
