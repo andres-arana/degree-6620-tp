@@ -45,26 +45,6 @@ flags adicionales a la llamada de gcc, como -O4 para aplicar las optimizaciones
 agresivas, etc. Por ejemplo, la linea `ACFLAGS=-O4 make` compila el ejecutable
 con todas las optimizaciones disponibles.
 
-También es posible habilitar o deshabilitar partes del sistema de log
-utilizando esta misma variable de entorno. El código fuente del programa
-utiliza las siguientes variables de preprocesador para habilitar estos módulos:
-
-1. `LOG_LEVEL_WARNING`: Si está definida, habilita logs de condiciones que si
-   bien no constituyen un error, indican situaciones extrañas en la ejecución
-   del programa.
-2. `LOG_LEVEL_DEBUG_SORT`: Si está definida, habilita los logs de depuración en
-   los algoritmos de ordenamiento implementados.
-3. `LOG_LEVEL_DEBUG_DATA`: Si está definida, habilita los logs de depuración en
-   el módulo de procesamiento de entrada de datos (tanto por stdin como por
-   archivos).
-
-Para habilitar estos módulos, se puede utilizar la variable `ACFLAGS` para
-indicar al compilador que defina estas variables de procesador. Por ejemplo, la
-siguiente linea compila el ejecutable sin optimización alguna, y habilita los
-logs para el módulo de procesamiento de datos de entrada:
-
-    ACFLAGS="-O0 -DLOG_LEVEL_DEBUG_DATA" make
-
 ### Administración de máquina virtual
 
 Dado que el trabajo práctico requiere la compilación y ejecución de código en
@@ -101,36 +81,6 @@ posteriormente conectarse por ssh a la misma es necesario ejecutar el siguiente
 comando:
 
     make virtual-deploy-all virtual-connect
-
-### Análisis de performance
-
-Para facilitar el análisis de performance se agregaron dos tareas relacionadas.
-
-La tarea `perf-data` lanza el ejecutable del trabajo práctico para ordenar los
-datos de cada uno de los archivos en `perf/data`. Concatena la información de
-time de cada uno de estos archivos en un archivo generado en `build/perf/raw`
-
-La tarea `perf-analyze` ejecuta el script `perf/analyze.rb`, encargado de
-analizar todos los archivos que se encuentren en `perf/times` y generar los
-archivos resumidos en `build/perf/analyzed`. Por un lado, genera tablas de los
-tiempos promediados de ejecución de cada situación analizada. Por el otro, se
-generan gráficos de los datos analizados en `build/doc`.
-
-### Profiling
-
-Para facilitar el profiling de la aplicación se agregaron las siguientes tareas:
-
-La tarea `prof` recompila el ejecutable con las opciones `-O0 -pg`, lo que
-habilita la colección de datos de profiling durante su ejecución. Luego ejecuta
-el programa con los datos de entrada localizados en `prof/data/input` y acumula
-las estadísticas de datos en `build/prof/raw/quicks.out`.  Finalmente utiliza
-el comando gprof para analizar los datos acumulados, generando un reporte
-detallado de ejecución en `build/prof/analyzed/quicks`
-
-### Generación de assembly
-
-Se incluye una tarea `asm` que genera el código assembly de cada uno de los
-archivos fuente en el directorio `build/asm/`.
 
 ### Generación de documentación
 

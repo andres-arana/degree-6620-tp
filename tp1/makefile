@@ -104,8 +104,6 @@ virtual-deploy-source:
 virtual-connect:
 	ssh -p 2222 root@127.0.0.1
 
-asm: prepare $(ASM)
-
 doc: prepare
 	pandoc README.md -o build/doc/README.pdf
 	pdflatex --output-directory build/doc docs/informe.tex
