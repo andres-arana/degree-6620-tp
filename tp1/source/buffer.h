@@ -21,21 +21,6 @@ struct buffer_t {
   unsigned int current;
 };
 
-/*
- * Representa una linea lista para ser procesada
- */
-struct line_t {
-  /**
-   * Los caracteres de la linea
-   */
-  char* data;
-
-  /*
-   * La cantidad de caracteres en la linea
-   */
-  unsigned int size;
-};
-
 /**
  * Inicializa el buffer en su estado inicial
  */
@@ -51,7 +36,7 @@ int buffer_push(struct buffer_t* buffer, char c);
  * copia de lo acumulado hasta el momento. Devuelve este nuevo string alocado y
  * deja el buffer limpio para acumular nuevamente.
  */
-struct line_t* buffer_reset(struct buffer_t* buffer);
+char* buffer_reset(struct buffer_t* buffer);
 
 /*
  * Establece si en el buffer dado existen chars que no se han obtenido aun a
@@ -62,10 +47,5 @@ int buffer_pending(struct buffer_t* buffer);
  * Libera los recursos ocupados por el buffer
  */
 void buffer_cleanup(struct buffer_t* buffer);
-
-/*
- * Compara dos lineas en orden lexicografico
- */
-int line_compare(struct line_t* a, struct line_t* b);
 
 #endif

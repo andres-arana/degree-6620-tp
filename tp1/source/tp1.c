@@ -5,7 +5,6 @@
 #include "cltext.h"
 #include "data.h"
 #include "stooge.h"
-#include "stooge_asm.h"
 #include "config.h"
 
 /**
@@ -51,10 +50,10 @@ int main(int argc, char** argv) {
   }
 
   /* Ordenamos los datos por alguno de los algoritmos */
-  if (args.stoogesort) {
-    sort_stooge(&data, 0, data.size - 1);
+  if (args.useAssemblyImplementation) {
+    sort_stooge_s(data.table, 0, data.size - 1);
   } else {
-    //sort_quicksort(&data, 0, data.size - 1);
+    sort_stooge_c(data.table, 0, data.size - 1);
   }
 
   /* Muestra los datos por pantalla */

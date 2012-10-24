@@ -11,7 +11,7 @@ temáticas:
 2. `gxemul`: Contiene el emulador y máquina virtual utilizada para ejecutar el
    trabajo práctico en la arquitectura MIPS requerida, en formato comprimido.
 3. `source`: Contiene el código fuente de la solución desarrollada, en lenguaje
-   C.
+   C y assembly según corresponda.
 4. `test`: Contiene los scripts de test automatizados y otros archivos
    necesarios para ejecutar la regresión de prueba automática.
 
@@ -91,3 +91,8 @@ genera el pdf final en `build/doc/informe.pdf`.
 
 Se incluye además una tarea `doc-preview`, que regenera el informe y abre el
 visor de documentos evince para poder previsualizar cómo queda el mismo.
+
+### Ejecución de casos de prueba
+
+La tarea `test-run` ejecuta una suite de scripts de pruebas automatizadas que
+validan la ejecución del trabajo práctico.

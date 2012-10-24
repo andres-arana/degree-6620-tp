@@ -11,7 +11,7 @@ struct data_t {
   /*
    * Los datos que tenemos que ordenar
    */
-  struct line_t** table;
+  char** table;
 
   /*
    * La cantidad de registros que hay en la tabla

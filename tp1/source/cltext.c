@@ -5,16 +5,15 @@
  * Ver documentacion en el header
  */
 void cl_text_help() {
-  puts("tp0 [OPTIONS] [FILE]");
+  puts("tp1 [OPTIONS] [FILE]");
   puts("-h, --help        display this help and exit");
   puts("-v, --version     display version information and exit");
-  puts("-q, --quick       use the quicksort algorithm");
-  puts("-s, --stooge      use the stoogesort algorithm");
+  puts("-c                use the C implementation of the sorting algorithm");
 }
 
 /*
  * Ver documentacion en el header
  */
 void cl_text_version() {
-  puts("tpo 1.0.0");
+  puts("tp1 1.0.0");
 }

@@ -16,14 +16,9 @@ struct cl_args_t {
   int version;
 
   /*
-   * 1 si se requiere utilizar quicksort, 0 en caso contrario.
+   * 1 si se quiere utilizar la version "rapida" implementada en assembly
    */
-  int quicksort;
-
-  /*
-   * 1 si se requiere stooge sort, 0 en caso contrario.
-   */
-  int stoogesort;
+  int useAssemblyImplementation;
 
   /*
    * Nombre del archivo a ordenar, si se ingreso alguno. 0 en caso contrario.

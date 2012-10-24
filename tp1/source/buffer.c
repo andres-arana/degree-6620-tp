@@ -48,33 +48,23 @@ int buffer_push(struct buffer_t* buffer, char c) {
 /*
  * Ver documentacion en el header
  */
-struct line_t* buffer_reset(struct buffer_t* buffer) {
+char* buffer_reset(struct buffer_t* buffer) {
   char* data;
-  struct line_t* line;
 
-  data = malloc(sizeof(char) * buffer->current);
+  data = malloc(sizeof(char) * (buffer->current + 1));
   if (!data) {
     LOG_DATA_DEBUG("Malloc on buffer_reset returned zero");
     LOG_ERROR("Not enough memory for line buffer reset");
     return 0;
   }
 
-  line = malloc(sizeof(struct line_t));
-  if (!line) {
-    free(data);
-    LOG_DATA_DEBUG("Malloc on buffer_reset returned zero");
-    LOG_ERROR("Not enough memory for line buffer reset");
-    return 0;
-  }
-
   memcpy(data, buffer->buffer, sizeof(char) * buffer->current);
-  line->data = data;
-  line->size = buffer->current;
+  data[buffer->current] = '\0';
 
   /* Se resetea el buffer para seguir acumulando chars */
   buffer->current = 0;
 
-  return line;
+  return data;
 }
 
 /*
@@ -91,28 +81,3 @@ void buffer_cleanup(struct buffer_t* buffer) {
   free(buffer->buffer);
 }
 
-/*
- * Ver documentacion en header
- */
-int line_compare(struct line_t* a, struct line_t* b) {
-  int i;
-  for (i = 0; i < a->size; i++) {
-    if (i >= b->size) {
-      return 1;
-    }
-
-    if (a->data[i] < b->data[i]) {
-      return -1;
-    }
-
-    if (a->data[i] > b->data[i]) {
-      return 1;
-    }
-  }
-
-  if (a->size < b->size) {
-    return -1;
-  }
-
-  return 0;
-}
