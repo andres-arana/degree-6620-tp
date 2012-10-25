@@ -67,12 +67,12 @@
 
   Este informe sumariza el desarrollo del trabajo práctico 1 de la materia
   Organización de Computadoras (66.20) dictada en el segundo cuatrimestre de
-  2012 en la Facultad de Ingeniería de la Universidad de Buenos Aires.
-  El mismo consiste en la construcción de un sistema halista de ordenamiento de
-  archivos y el análisis de performance y perfilado del mismo, con foco en la
-  utilización del conjunto de instrucciones de MIPS para soportar el
-  desarrollo de estas tareas que será reutilizado en futuros trabajos
-  prácticos.
+  2012 en la Facultad de Ingeniería de la Universidad de Buenos Aires. El mismo
+  consiste en la optimización del sistema de ordenamiento de archivos realizado
+  en el Trabajo Práctico 0 de la misma materia implementando las rutinas
+  críticas de uno de los algoritmos utilizados directamente sobre assembly
+  MIPS, enfocando el análisis posterior a las diferencias observadas entre las
+  implementaciones de este y el anterior trabajo práctico.
 
 \end{abstract}
 
@@ -92,55 +92,133 @@
 
 \section{Introducción}
 
-La utilización del conjunto de instrucciones MIPS nos permite generar código
-assembly de los sistema de ordenamiento que anteriormente manejamos.
-En este caso se realizara nuevamente el ordenamiento a través del algoritmo 
-de stooge implementado a través del lenguaje ensamblador.
+El proceso de compilación de un programa codificado en C consiste en un
+pipeline que genera finalmente código objeto para una arquitectura objetivo.
+Este pipeline analiza y traduce el código a diferentes representaciones de los
+algoritmos contenidos en él, de manera de terminar generando código objeto que
+finalmente se linkea en un ejecutable válido para la arquitectura.
 
-Ésto nos permite analizar nuevamente mediciones de tiempos de
-ejecución y perfilado de performance a través de las herramientas \textit{time}
-\cite{WIKITIME} y \textit{gprof} \cite{GPROF} para detectar y medir diferencias
-de performance entre ambos algoritmos.
+Debido a que el lenguaje C es un lenguaje de alto nivel, varios de los
+conceptos propios de este lenguaje deben ser mapeados a diferentes estrategias
+que pueden ser ejecutadas en el código objeto, que no es más que el conjunto de
+instrucciones que la arquitectura objetivo provee. Estos mapeos muchas veces
+pueden implementarse de diferentes maneras, cada una con sus ventajas y
+desventajas, y si bien el compilador realiza una muy buena tarea en determinar
+la mejor manera en la que traducir estos conceptos en instrucciones de bajo
+nivel, los algoritmos utilizados no garantizan que la traducción sea de manera
+de generar el código objeto más eficiente y compacto que se podría tener.
+
+La alternativa que se propone explorar en el presente trabajo es la
+implementación directa en assembly de las rutinas del sistema que se está
+construyendo. Esta alternativa tiene una característica fundamental: al tener
+acceso al conjunto de instrucciones que ejecuta la arquitectura potencialmente
+se puede desarrollar una solución óptima, minimizando el acceso a memoria, la
+cantidad de instrucciones a ejecutar, etc.
+
+Por otro lado, la implementación en assembly de un sistema no trivial es una
+tarea complicada. La dificultad principal radica en que es tarea del
+programador implementar y controlar muchos de los mecanismos de bajo nivel que
+constituyen el \textit{cómo} de la solución, en vez de concentrarse en el
+\textit{qué}. Algunos ejemplos son el manejo del stack, la implementación de
+convenciones de llamadas de subrutinas, el uso de registros compartidos, entre
+otros.
 
 \section{Implementación}
 
-El software que resuelve el problema planteado en el enunciado (disponible en
-el anexo \ref{sec:enunciado}) fue implementado íntegramente en C y en especial
-se agrega la implementación en assembly del algoritmo de stooge. El código
-fuente de la solución está disponible en el anexo \ref{sec:source}.
+El sistema que resuelve el problema planteado en el enunciado (disponible en el
+anexo \ref{sec:enunciado}) fue implementado mayoritariamente en C, reutilizando
+el código desarrollado en el Trabajo Práctico 0 de esta materia. La diferencia
+fundamental radica en la implementación de las rutinas de ordenamiento a través
+del algoritmo \textit{stoogesort} directamente en assembly. El código fuente de
+la solución está disponible en el anexo \ref{sec:source}; por cuestiones de
+espacio y prolijidad sólo se incluyen los archivos relacionados con la
+implementación en assembly de la solución desarrollada.
 
-El archivo stooge.S contiene la implementación del algoritmo de stooge en assembly
-y la extensión \textit{S} refiere a que necesitamos que se lean las directivas
-de precompilador.
-Las directivas utilizadas nos permiten hacer referencia a los registros mediante
-el nombre de los mismos.
+Cabe destacar que la solución en assembly definitivamente no es la solución
+óptima. Existen algunas mejoras posibles para disminuir la cantidad de
+instrucciones a ejecutar o los accesos a memoria: por ejemplo, se podrían
+reordenar las instrucciones de algunos de los bloques de los procedimientos
+implementados para eliminar algunas de las instrucciones de salto
+incondicional, o se podrían utilizar de mejor manera los registros salvados
+(s0-s8) para eliminar la necesidad de restaurar desde el stack algunos de los
+registros en uso (particularmente a0, a1 y a2 en la implementación de
+\textit{stooge\_sort\_s}). Sin embargo, dado que la solución que se presenta
+contiene el \(40\%\) de las instrucciones del equivalente implementado en C
+compilado sin optimizaciones, a los efectos del trabajo práctico consideramos
+suficientemente óptima la implementación propuesta.
 
-En las siguientes secciones detallaremos las decisiones de diseño que
-consideramos relevantes al desarrollo del trabajo práctico para algunos de
-estos módulos.
+A continuación enumeraremos algunas consideraciones de diseño tomadas al
+implementar cada una de las funciones involucradas en el algoritmo de
+ordenamiento.
+
+\subsection{stooge\_sort\_s}
+
+Esta función implementa el ordenamiento de una tabla de strings a través de
+\textit{stoogesort}. El método de ordenamiento fue implementado en su forma más
+sencilla a través de un algoritmo recursivo. El stack frame típico de la
+función se describe a continuación en la figura \ref{fig:stackstooge}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{docs/stoogesort_diagrama.png}
+  \caption{Diagrama de stack para la función de Stoogesort} \label{fig:stackstooge}
+\end{figure}
+
+\FloatBarrier
+
+Se reservan 16 bytes para el área de RTA: 4 bytes para salvar el registro ra en
+llamadas a otras funciones, 4 bytes para salvar el registro gp, 4 bytes para
+preservar el registro s0 utilizado en varios de los cálculos de la función y
+finalmente 4 bytes de padding para hacer el stack double-word aligned.
+
+Por otro lado, dado que las funciones invocadas desde esta no poseen nunca más
+de tres argumentos, se reservan \(4 x 4\) bytes en concepto de ABA para ser
+utilizados por las funciones llamadas.
+
+Esta función invoca tanto a \textit{compare\_s} como a \textit{swap\_s}, además
+de las invocaciones recursivas mencionadas anteriormente.
+
+\subsection{compare\_s}
+
+Esta función compara byte a byte dos cadenas de caracteres terminadas en 0
+(siguiendo la convención de C). Devuelve -1 si la primer cadena es anterior a
+la segunda, 0 si son iguales o 1 si la primer cadena es posterior a la segunda.
+
+Esta función fue implementada como leaf, sin invocar otras funciones
+auxiliares. Además, no se hace acceso en ningún momento a memoria compartida ni
+global, y todos los cálculos pudieron hacerse utilizando los registros
+temporales. Por lo tanto, de acuerdo a la ABI O32 utilizada para implementar el
+trabajo práctico, no es necesario salvar en stack ningún valor, ni siquiera el
+registro gp.
+
+\subsection{swap\_s}
+
+Esta función intercambia las cadenas ubicadas en dos posiciones dadas dentro de
+una tabla de cadenas.
+
+Nuevamente, todos los cálculos se realizaron utilizando registros temporales,
+por lo que no fue necesario guardar ningún registro en stack para su posterior
+restauración. Tampoco se hizo acceso a memoria compartida o global, por lo que
+no fue necesario guardar el registro gp. De esta manera se evitó tener que
+reservar y acceder a la memoria para administrar el stack frame de la función.
 
 \section{Compilación}
 
-Se instrumentó un \textit{makefile} \cite{WIKIMAKE} para ejecutar las
-instrucciones adecuadas de compilación para los distintos escenarios
-requeridos.
-
-\subsection{Ejecutable}
-
-En el caso de la compilación del ejecutable final del trabajo práctico, la
+Se instrumentó un \textit{makefile} para ejecutar las instrucciones adecuadas
+de compilación para los distintos escenarios requeridos. La
 tarea \textit{make} compila individualmente cada uno de los archivos fuente de
-extensión \textit{c} y \textit{S} a través del ejecutable \textit{gcc} \cite{WIKIGCC}.
+extensión \textit{c} y \textit{S} a través del ejecutable \textit{gcc}.
 Los comandos utilizados para compilar cada uno de estos archivos fuente son los
 siguientes:
 
 \begin{lstlisting}
 gcc -c -o build/obj/buffer.o source/buffer.c -I./source -Wall
-gcc -c -o build/data.o source/data.c -I./source -Wall
+gcc -c -o build/obj/data.o source/data.c -I./source -Wall
 gcc -c -o build/obj/clargs.o source/clargs.c -I./source -Wall
 gcc -c -o build/obj/cltext.o source/cltext.c -I./source -Wall
 gcc -c -o build/obj/tp1.o source/tp1.c -I./source -Wall
 gcc -c -o build/obj/stoogec.o source/stooge.c -I./source -Wall
-gcc -c -o build/obj/stoogeasm.o source/stooge.S -I./source -Wall
+gcc -c -o build/obj/stoogeasm.o source/stooge.S -I./source -WalL
 \end{lstlisting}
 
 De este listado, cada una de las invocaciones obedece a la siguiente estructura
@@ -176,43 +254,6 @@ gcc -o build/tp0 \
 El comando linkea todos los archivos objeto en un ejecutable final,
 \textit{build/tp1}.
 
-\subsection{Código de ensamblador MIPS}
-
-En uno de los puntos del trabajo práctico, se pide visualizar el código en
-ensamblador generado por el compilador en una arquitectura MIPS para el trabajo
-práctico. Para completar esta tarea, se utiliza un comando utilizando
-nuevamente \textit{gcc} que compila cada uno de los fuentes del trabajo
-práctico, pero detiene el pipeline de compilación al generar el código de
-ensamblador de cada uno de ellos. Los comandos correspondientes son los
-siguientes:
-
-\begin{lstlisting}
-gcc -S -o build/obj/buffer.s source/buffer.c
-gcc -S -o build/obj/data.s source/data.c
-gcc -S -o build/obj/clargs.s source/clargs.c
-gcc -S -o build/obj/cltext.s source/cltext.c
-gcc -S -o build/obj/tp0.s source/tp0.c
-gcc -S -o build/obj/stooge.s source/stooge.c
-gcc -S -o build/obj/quicksort.s source/quicksort.c
-\end{lstlisting}
-
-En particular, el flag de compilación \textit{-S} es el que indica al
-compilador que debe detener el pipeline al generar el código ensamblador para
-el fuente compilado, de manera de que en el archivo indicado por \textit{-o} se
-obtiene el código ensamblador pedido.
-
-A modo informativo, existen indicativas opcionales como \textit{-mrnames}, que
-nos permite indicarle al compilador que nombre los registros utilizados en el
-código ensamblador en vez de numerarlos, y las indicativas \textit{-Ol}, con l
-entre 0 y 3, que indican al compilador el nivel de optimización a desarrollar.
-
-\section{Corridas de prueba}
-
-Las corridas de prueba están automatizadas por el comando \(make\) \(testdata\) 
-en la raíz del proyecto. Éstas corridas trabajan sobre el directorio de test.
-Los comentarios se agregan en su ejecución.
-
-
 \section{Análisis de tiempos de ejecución}
 
 En las siguientes secciones detallaremos el proceso de análisis de tiempo de
@@ -220,169 +261,114 @@ ejecución realizado para los diferentes casos contemplados.
 
 \subsection{Análisis previo}\label{sec:tiempos}
 
-Para realizar el análisis de tiempos de ejecución se decidió elaborar un
-conjunto de archivos de entrada para los cuales el tiempo de ejecución sería
-medido. Se determinaron los siguientes criterios para generar los diferentes
-experimentos a medir:
+El análisis de tiempos de ejecución se focalizará en comparar la performance de la implementación en assembly descripta anteriormente contra diferentes versiones de escencialmente el mismo sistema.
 
-\begin{description}
+Primero se comparará el sistema contra la implementación realizada en el
+Trabajo Práctico 0 del mismo algoritmo pero en C. Por un lado, al compilar esta
+solución sin ninguna optimización del compilador se espera obtener ganancias de
+performance apreciables, debidas mayormente al mejor manejo de los accesos a
+memoria logrados por el ejecutable desarrollado en assembly.
 
-  \item[Tamaño] Tanto los algoritmos de ordenamiento como el módulo
-    de adquisición de entrada son sensibles al tamaño del archivo a ordenar. Se
-    espera por lo tanto que a mayor tamaño aumenten los tiempos de ejecución.
+Posteriormente se comparará nuestra implementación contra el mismo desarrollo
+en C, pero esta vez utilizando todas las optimizaciones disponibles por el
+compilador. Se espera nuevamente encontrar algunas mejoras, aunque pequeñas,
+con respecto a lo que puede entregar el compilador.
 
-  \item[Cantidad de lineas] Nuevamente, los algoritmos de ordenamiento son
-    altamente sensibles a la cantidad de elementos a ordenar. Se espera que a
-    mayor cantidad de lineas mayor sea el tiempo de ejecución del experimento.
+Finalmente se comparará el sistema contra la implementación realizada en el
+Trabajo Práctico 0 utilizando \textit{quicksort}. Se compilará el ejecutable
+con todas las optimizaciones posibles. Se espera, de acuerdo a las
+características del algoritmo, que esta nueva implementación sea mucho más
+performante que la nuestra; para más detalles puede consultarse el trabajo
+práctico citado.
 
-  \item[Ordenamiento] Existe una dependencia entre el tiempo de ejecución de
-    los algoritmos con el modo de ordenamiento de la entrada, es decir, si la
-    entrada esta ordenada, inversamente ordenada o mezclada aleatoriamente. De
-    acuerdo a la elección de la implementación del algoritmo \textit{quicksort}
-    detallada en la sección \ref{sec:ord}, no se esperan grandes variaciones en
-    los tiempos de ejecución para este algoritmo en este aspecto. Sin embargo
-    \textit{stoogesort} es algo más lento en el caso de una entrada
-    inversamente ordenada, por lo que se espera una diferencia apreciable de
-    velocidad de ejecución para este caso.
+\subsection{Experimentos}
 
-\end{description}
+Se generó un archivo de 32\(Kb\) ordenado al azar constituído por 220 líneas de
+texto. El mismo se utilizó como entrada para cada uno de los ejecutables
+descriptos en la sección \ref{sec:tiempos}. En el cuadro \ref{tab:resultados}
+se detallan los resultados obtenidos.
 
-\subsection{Generación de datos de entrada}
-
-Se generaron archivos de texto base de 1\(Kb\), 8\(Kb\), 16\(Kb\) y
-32\(Kb\). Para cada uno de esos archivos de texto se generaron 3 variantes
-ordenadas según diferentes criterios:
-
-\begin{enumerate}
-  \item Ordenado con el comando `sort`.
-  \item Ordenado inversamente con el comando `sort -r`.
-  \item Mezclado aleatoriamente con el comando `sort -R`.
-\end{enumerate}
-
-Por último, se duplicaron todos los archivos generados introduciendo para cada
-archivo una variante de lineas cortas. Estos archivos son idénticos en
-contenido a los archivos originales, sólo que se procesaron un el comando
-\textit{sed} \cite{WIKISED} para dividir las lineas largas del archivo original
-en lineas de menos de 80 caracteres. De esta forma, se altera la cantidad de
-lineas disponibles sin alterar el tamaño total del archivo.
-
-De esta manera, se generaron en total 24 archivos distintos, cada uno
-constituyendo un experimento diferente para cada uno de los parámetros
-detallados en la sección \ref{sec:tiempos}.
-
-\subsection{Mediciones}
-
-Las mediciones realizadas en el trabajo practico 0 nos permitieron
-encontrarnos con una diferencia importante respecto de la nueva 
-implementación del algoritmo de ordenamiento stooge a través del uso
-de las instruccinoes de MIPS 32.
-
-Las medidas anteriormente tomadas son las siguientes:
-
-\begin{enumerate}
-  tiempo de ejecución de stoogesort original: 9.960s
-  tiempo de ejecución de quicksort original: 0.143s
-\end{enumerate}
-
-Mientras que con la implementación en assembly obtenemos
-
-\begin{enumerate}
-  tiempo de ejecución de stoogesort mejorado: 4.230s
-\end{enumerate}
-
-
-\section{Diagramas de stack de cada función implementada en MIPS 32}
-
-\subsection{String Compare Function}
-
-La función string compare se declara de la siguiente manera
-
-\begin{lstlisting}
-  int compare_s(char* start, char* end);
-\end{lstlisting}
-
-Dicha función es una función hoja lo que nos está diciendo
-que no llama a otra funciòn dentro de la declaraciòn de su cuerpo.
-Tampoco utiliza espacio en memoria para alojar variables locales o bien
-saved registers.
-Como consecuencia estas funciones no necesitan alterar el registro sp.
-Si es importante tener en cuenta que se tiene que alterar los registros
-de argumentos para el pasaje de sus valores.
-
-\subsection{Swap Function}
-
-La funcion Swap se declara de la siguiente manera
-
-\begin{lstlisting}
-  void swap_s(char** data, unsigned int a, unsigned int b);
-\end{lstlisting}
-
-Y al ser una función hoja sucede lo mismo que con la anterior.
-No contienen un stack propio.
-
-\subsection{Stooge Sort Function}
-
-La funcion Stooge Sort se declara de la siguiente manera
-
-\begin{lstlisting}
-  void stooge_sort(char** data, unsigned int a, unsigned int b);
-\end{lstlisting}
-
-En este caso la funcion llama a distintas funciones dentro
-del desarrollo de su cuerpo.
-Estas funciones son las anteriormente mencionadas como asì 
-también se produce la llamada recursiva a sí misma.
-
-El diagrama de stack que presenta se repite en caso que invoque
-nuevamente la funcion pero alterando los registros de argumento
-para que sus valores sean los correctos.
-
-\begin{figure}
-  \begin{subfigure}[b]{\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{build/doc/stoogesort_diagrama.png}
-    \caption{Stooge sort diagrama de stack}
-  \end{subfigure}%
-  \caption{Diagrama de Stack para la función de Stoogesort}\label{fig:speedup}
-\end{figure}
+\begin{table}[h!t]
+\centering
+\begin{tabular}{ | l | r | }
+  \hline
+  Ejecutable          & Tiempo de ejecución (s) \\ \hline
+  Stoogesort assembly & \(4.230\) \\
+  Stoogesort C O0     & \(9.960\) \\
+  Stoogesort C O3     & \(4.867\) \\
+  Quicksort C O0      & \(0.143\) \\
+  Quicksort C O3      & \(0.073\) \\
+  \hline
+\end{tabular}
+\caption{Medición de tiempos de ejecución para cada experimento}
+\label{tab:resultados}
+\end{table}
 
 \FloatBarrier
 
+Se observaron todos los resultados esperados. Si bien hubo una mejoría
+apreciable en el tiempo de ejecución de la implementación en assembly contra la
+de C sin optimizaciones de compilador (más del 50\% de ganancia), la
+compilación con todas las optimizaciones activadas se mantuvo relativamente
+cerca de nuestra implementación particular.
+
+Por otro lado, como era de esperarse, la implementación por \textit{quicksort}
+fue muchísimo más performante que nuestra versión optimizada manualmente,
+tomando menos del 10\% del tiempo de ejecución de nuestar versión incluso en la
+versión compilada sin optimizaciones del compilador.
+
 \section{Conclusiones}
 
-Respecto de las mediciones que obtuvimos luego de desempeñarnos con el
-conjunto de instrucciones que MIPS nos brinda nos hemos sorprendido 
-justmente en los tiempos de procesamiento.
-Hemos visto un claro progreso y mejora con el algoritmo de 
-ordenamiento implementado en assembly que nos permitiò mejorar el 
-marcado por el mismo algoritmo pero desarrollado en c.
+La implementación en assembly del trabajo práctico, incluso cuando este se
+trataba de un algoritmo relativamente simple y sencillo de desarrollar, fue
+relativamente complicado. Como se explicó en secciones anteriores, gran parte
+de la dificultad inherente en este desarrollo se encuentra en la necesidad de
+implementar, administrar y controlar la infraestructura de los llamados a
+funciones y otros artefactos básicos de integración. Por otro lado, el código
+de ensamblador no provee muchas de las abstracciones básicas que se dan por
+sentado en los lenguajes de alto nivel, como bloques codicionales y conversión
+de tipos, lo que hizo que la implementación del algoritmo sea aún más
+dificultoso: el \textit{qué} estabamos haciendo se mezclaba con el
+\textit{cómo}. Por último, la ausencia de mecanismos de seguridad presentes en
+lenguajes compilados, como la comprobación de tipos, prototipos funcionales y
+declaratividad en la asignación de nombres a variables incrementó la cantidad
+de bugs con los que nos topamos, lo que dio a lugar a más trabajo de depuración
+y testing.
 
-Nos resulto complicado de desarrollar a la hora de querer realizar verificaciones
-y comprobar que los datos que iban pasando eran los que esperabamos.
-Un mininmo error que se produzca y puede ser que el codigo no haga lo que
-queremos hacer.
+El costo adicional de implementación fue claro: mientras que la versión en C
+fue diseñada, implementada y testeada en 4 horas de trabajo de uno de los
+integrantes del trabajo práctico, su equivalente en assembly nos llevó a dos
+integrantes varios días de trabajo, particularmente en el testing y depuración
+de errores. Si bien puede atribuirse esto a la falta de experiencia en
+programación a bajo nivel, el resultado sigue siendo que el desarrollo es mucho
+más costoso.
 
-Por otro lado, coincidimos que gracias al poder manejarnos con las instrucciones
-de MIPS mejoramos mucho el tiempo que se demora en ir a leer los datos a memoria
-o bien almacenarlos en ella.
-\cite{OPT}.
+Teniendo en cuena estos factores, entendemos que es imperativo el análisis de
+costo-beneficio al decidirse por una implementación de este tipo. En nuestro
+caso particular, la diferencia en tiempo de ejecución de nuestra solución
+contra la producida por un compilador con todas las optimizaciones disponibles
+habilitadas está dentro del 10\%. ¿Justifica el enorme costo adicional esa
+ganancia?
 
-\begin{thebibliography}{99}
+Analizando el resto de los resultados concluímos que la versión implementada en
+C con \textit{quicksort}, incluso cuando no se aplicaron optimizaciones de
+compilador, era un orden de magnitud más eficiente que la versión implementada
+en assembly. Esta versión fue desarrollada, depurada y testeada por un
+integrante en el transcurso de un día, con un costo total de implementación
+mucho menor a lo necesario para la versión assembly.
 
-\bibitem{WIKISORT} Sort, file sorting linux command, http://en.wikipedia.org/wiki/Sort\_(Unix)
-\bibitem{WIKIQS} Quicksort, fast sorting algorithm, http://en.wikipedia.org/wiki/Quicksort
-\bibitem{WIKIST} Stoogesort, inefficient sorting algorithm, http://en.wikipedia.org/wiki/Stooge\_sort
-\bibitem{WIKITIME} Time, execution time measurement linux command, http://en.wikipedia.org/wiki/Time\_(Unix)
-\bibitem{GPROF} GNU gprof, profiling utility for compiled executables, http://www.cs.utah.edu/dept/old/texinfo/as/gprof.html
-\bibitem{WIKIBUB} Bubblesort, simple sorting algorithm, http://en.wikipedia.org/wiki/Bubblesort
-\bibitem{WIKISED} Sed, stream editor linux command, http://en.wikipedia.org/wiki/Sed
-\bibitem{WIKIBASH} Bash, bourne again linux shell, http://en.wikipedia.org/wiki/Bash\_(Unix\_shell)
-\bibitem{WIKIRUBY} Ruby, dynamic, reflective general purpose language, http://en.wikipedia.org/wiki/Ruby\_(programming\_language)
-\bibitem{OPT} Knuth, Donald (December 1974). "Structured Programming with go to Statements". ACM Journal Computing Surveys 6 (4): 268.
-\bibitem{WIKIMAKE} Make, automatic source code building utility, http://en.wikipedia.org/wiki/Makefile
-\bibitem{WIKIGCC} GCC, GNU Compiler Collection, http://en.wikipedia.org/wiki/GNU\_Compiler\_Collection
+Como en todas las ingenierías, nuestro trabajo se basa en nuestra capacidad de
+analizar alternativas y balancear costos y beneficios. En nuestro caso
+particular, la implementación en assembly del sistema no era conveniente.
+Realizando un análisis previo fácilmente podíamos concluir que para mejorar la
+performance era mejor la alternativa de cambiar el algoritmo de ordenamiento
+antes que invertir tiempo y esfuerzo en realizar la conversión.
 
-\end{thebibliography}
+Esta conclusión contradice la creencia generalizada de que la implementación
+más eficiente se logra descartando las abstracciones de las que disponemos. No
+siempre que se desarrolle una solución al más bajo nivel posible se llegará a
+la solución más óptima. Y aún cuando sea la óptima, hay que evaluar si el costo
+adicional incurrido justifica las ganancias obtenidas.
 
 \clearpage
 
@@ -397,24 +383,10 @@ o bien almacenarlos en ella.
 \includepdf[pages={-}]{build/doc/README.pdf}
 
 \clearpage
-\section{Salida de gprof}\label{sec:gprof}
-\clearpage
-\lstset{
-  basicstyle=\footnotesize,
-  showspaces=false,
-  showstringspaces=false,
-  breaklines=true,
-  frame=single
-}
-
-\lstinputlisting{prof/results}
-
-\clearpage
 \section{Código fuente}\label{sec:source}
 \clearpage
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \lstset{
-  language=C,
   title=\lstname,
   basicstyle=\footnotesize,
   showspaces=false,
@@ -427,13 +399,7 @@ o bien almacenarlos en ella.
   frame=single
 }
 
-
-
- NOTA: Sólo se incluyen los fuentes de los archivos que fueron agregados y alterados.
-
 \lstinputlisting{source/stooge.h}
-\lstinputlisting{source/stooge.c}
 \lstinputlisting{source/stooge.S}
-\lstinputlisting{source/tp1.c}
 
 \end{document}
