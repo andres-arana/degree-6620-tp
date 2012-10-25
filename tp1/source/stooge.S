@@ -141,6 +141,14 @@ swap_s: .ent swap_s
 .end swap_s
 .size swap_s, .-swap_s
 
+/************************************************************************
+Definicion de la funcion sort_stooge_s. Esta funcion ordena una tabla de datos
+a traves del algoritmo stoogesort.
+
+El prototipo en C es como sigue:
+
+void sort_stooge_s(char **data, unsigned int start, unsigned int end);
+************************************************************************/
 .globl sort_stooge_s
 sort_stooge_s: .ent sort_stooge_s
 
