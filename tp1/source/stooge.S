@@ -49,8 +49,8 @@ int compare_s(char* start, char* end);
 ************************************************************************/
 compare_s: .ent compare_s
 
-  # Frame de tamanio 0
-  .frame fp,0,ra
+  # Frame size
+  .frame sp,0,ra
 
 COMP_LOOP:
   # Se cargan los bytes apuntados por los argumentos
@@ -116,8 +116,8 @@ void swap_c(char **data, unsigned int a, unsigned int b);
 ************************************************************************/
 swap_s: .ent swap_s
 
-  # Frame de tamanio 0
-  .frame fp,0,ra
+  # Frame size
+  .frame sp,0,ra
 
   # Se computa la direccion en memoria donde se encuentra el primer elemento a
   # intercambiar: a1 = a0 + (a1 * 4)
@@ -141,90 +141,111 @@ swap_s: .ent swap_s
 .end swap_s
 .size swap_s, .-swap_s
 
-	.align	2
-	.globl	sort_stooge_s
-	.ent	sort_stooge_s
-sort_stooge_s:
-	.frame	fp,48,$31		# vars= 8, regs= 3/0, args= 16, extra= 8
-	.mask	0xd0000000,-8
-	.fmask	0x00000000,0
-	.set	noreorder
-	.cpload	$25
-	.set	reorder
-	subu	sp,sp,48
-	.cprestore 16
-	sw	$31,40(sp)
-	sw	fp,36(sp)
-	sw	$28,32(sp)
-	move	fp,sp
-	sw	$4,48(fp)
-	sw	$5,52(fp)
-	sw	$6,56(fp)
-	lw	$2,52(fp)
-	sll	$3,$2,2
-	lw	$2,48(fp)
-	addu	$4,$3,$2
-	lw	$2,56(fp)
-	sll	$3,$2,2
-	lw	$2,48(fp)
-	addu	$2,$3,$2
-	lw	$4,0($4)
-	lw	$5,0($2)
-	la	$25,compare_s
-	jal	$31,$25
-	blez	$2,$L22
-	lw	$4,48(fp)
-	lw	$5,52(fp)
-	lw	$6,56(fp)
-	la	$25,swap_s
-	jal	$31,$25
-$L22:
-	lw	$3,56(fp)
-	lw	$2,52(fp)
-	subu	$2,$3,$2
-	addu	$2,$2,1
-	sltu	$2,$2,3
-	bne	$2,$0,$L20
-	lw	$3,56(fp)
-	lw	$2,52(fp)
-	subu	$2,$3,$2
-	addu	$3,$2,1
-	li	$2,-1431699456			# 0xffffffffaaaa0000
-	ori	$2,$2,0xaaab
-	multu	$3,$2
-	mfhi	$2
-	srl	$2,$2,1
-	sw	$2,24(fp)
-	lw	$3,56(fp)
-	lw	$2,24(fp)
-	subu	$2,$3,$2
-	lw	$4,48(fp)
-	lw	$5,52(fp)
-	move	$6,$2
-	la	$25,sort_stooge_s
-	jal	$31,$25
-	lw	$3,52(fp)
-	lw	$2,24(fp)
-	addu	$2,$3,$2
-	lw	$4,48(fp)
-	move	$5,$2
-	lw	$6,56(fp)
-	la	$25,sort_stooge_s
-	jal	$31,$25
-	lw	$3,56(fp)
-	lw	$2,24(fp)
-	subu	$2,$3,$2
-	lw	$4,48(fp)
-	lw	$5,52(fp)
-	move	$6,$2
-	la	$25,sort_stooge_s
-	jal	$31,$25
-$L20:
-	move	sp,fp
-	lw	$31,40(sp)
-	lw	fp,36(sp)
-	addu	sp,sp,48
-	j	$31
-	.end	sort_stooge_s
-	.size	sort_stooge_s, .-sort_stooge_s
-	.ident	"GCC: (GNU) 3.3.3 (NetBSD nb3 20040520)"
+.globl sort_stooge_s
+sort_stooge_s: .ent sort_stooge_s
+
+  # Frame size
+  #   + 16 bytes RTA: ra, gp, s0, padding
+  #   + 16 bytes ABA: a3, a2, a1, a0
+  .frame sp,32,ra
+
+  # Set up del global pointer
+  .set noreorder
+  .cpload t9
+  .set reorder
+
+  # Expandimos el stack
+  subu sp, sp, 32
+
+  # Grabamos los registros a preservar
+  sw ra, 28(sp)
+  .cprestore 24
+  sw s0, 20(sp)
+
+  # Grabamos los argumentos para preservarlos
+  sw a0, 32(sp)
+  sw a1, 36(sp)
+  sw a2, 40(sp)
+
+  # Calculamos la ubicacion en memoria de los strings a comparar. Dejamos los
+  # valores resultantes en a1 y a2
+  sll t0, a1, 2
+  addu t0, a0, t0
+  lw a1, (t0)
+  sll t0, a2, 2
+  addu t0, a0, t0
+  lw a2, (t0)
+
+  # Invocamos a la funcion compare_s
+  move a0, a1
+  move a1, a2
+  la jp, compare_s
+  jal ra, jp
+
+  # Restauramos los registros de argumentos
+  lw a0, 32(sp)
+  lw a1, 36(sp)
+  lw a2, 40(sp)
+
+  # Si el resultado es mayor o igual a cero hay que realizar un swap
+  blez v0, SORT_NOSWAP
+  la jp, swap_s
+  jal ra, jp
+
+  # Restauramos los registros de argumentos
+  lw a0, 32(sp)
+  lw a1, 36(sp)
+  lw a2, 40(sp)
+
+SORT_NOSWAP:
+  # Calculamos end - start + 1 - 3 en t0
+  subu t0, a2, a1
+  subu t0, t0, 2
+
+  # Si el resultado es < 0, no es necesario realizar invocaciones recursivas
+  bltz t0, SORT_NOREC
+
+  # Calculamos next_end como (end - start + 1) / 3 y lo dejamos en s0
+  subu t0, a2, a1
+  addu t0, t0, 1
+  li t1, 3
+  divu t0, t1
+  nop # Necesario para asegurar consistencia de LO
+  mflo s0
+
+  # Invocacion recursiva en la primera parte del array
+  subu a2, a2, s0
+  la jp, sort_stooge_s
+  jal ra, jp
+
+  # Restauramos los registros de argumentos
+  lw a0, 32(sp)
+  lw a1, 36(sp)
+  lw a2, 40(sp)
+
+  # Invocacion recursiva en la segunda parte del array
+  addu a1, a1, s0
+  la jp, sort_stooge_s
+  jal ra, jp
+
+  # Restauramos los registros de argumentos
+  lw a0, 32(sp)
+  lw a1, 36(sp)
+  lw a2, 40(sp)
+
+  # Invocacion recursiva en la primera parte del array nuevamente
+  subu a2, a2, s0
+  la jp, sort_stooge_s
+  jal ra, jp
+
+SORT_NOREC:
+  # Teardown del stack
+  lw ra, 28(sp)
+  lw s0, 20(sp)
+
+  addu sp, sp, 32
+
+  jr ra
+.end sort_stooge_s
+.size sort_stooge_s, .-sort_stooge_s
+

@@ -71,12 +71,6 @@ void sort_stooge_c(char** data, unsigned int start, unsigned int end) {
   LOG_SORT_DEBUG_IVAR(start);
   LOG_SORT_DEBUG_IVAR(end);
 
-  if (end < 0) {
-    end = 0;
-    LOG_SORT_DEBUG("end is less than zero, adjusting");
-    LOG_SORT_DEBUG_IVAR(end);
-  }
-
   if (compare_c(data[start], data[end]) > 0) {
     swap_c(data, start, end);
   }
