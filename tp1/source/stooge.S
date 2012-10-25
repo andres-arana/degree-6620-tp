@@ -36,144 +36,76 @@ Nombres de registros entendibles
 #define s8      $30   /* Salvado (Callee preserved), apunta al mismo lugar que fp */
 #define ra      $31   /* Direccion de retorno */
 
-	.abicalls
-	.text
-	.align	2
-	.globl	length_s
-	.ent	length_s
-length_s:
-	.frame	fp,24,$31		# vars= 8, regs= 2/0, args= 0, extra= 8
-	.mask	0x50000000,-4
-	.fmask	0x00000000,0
-	.set	noreorder
-	.cpload	$25
-	.set	reorder
-	subu	sp,sp,24
-	.cprestore 0
-	sw	fp,20(sp)
-	sw	$28,16(sp)
-	move	fp,sp
-	sw	$4,24(fp)
-	sw	$0,8(fp)
-	lw	$2,24(fp)
-	sw	$2,12(fp)
-	lw	$2,24(fp)
-	sw	$2,12(fp)
-$L6:
-	lw	$2,12(fp)
-	lb	$2,0($2)
-	bne	$2,$0,$L9
-	b	$L7
-$L9:
-	lw	$2,8(fp)
-	addu	$2,$2,1
-	sw	$2,8(fp)
-	lw	$2,12(fp)
-	addu	$2,$2,1
-	sw	$2,12(fp)
-	b	$L6
-$L7:
-	lw	$2,8(fp)
-	move	sp,fp
-	lw	fp,20(sp)
-	addu	sp,sp,24
-	j	$31
-	.end	length_s
-	.size	length_s, .-length_s
-	.align	2
-	.globl	compare_s
-	.ent	compare_s
-compare_s:
-	.frame	fp,56,$31		# vars= 16, regs= 3/0, args= 16, extra= 8
-	.mask	0xd0000000,-8
-	.fmask	0x00000000,0
-	.set	noreorder
-	.cpload	$25
-	.set	reorder
-	subu	sp,sp,56
-	.cprestore 16
-	sw	$31,48(sp)
-	sw	fp,44(sp)
-	sw	$28,40(sp)
-	move	fp,sp
-	sw	$4,56(fp)
-	sw	$5,60(fp)
-	lw	$4,56(fp)
-	la	$25,length_s
-	jal	$31,$25
-	sw	$2,28(fp)
-	lw	$4,60(fp)
-	la	$25,length_s
-	jal	$31,$25
-	sw	$2,32(fp)
-	sw	$0,24(fp)
-$L11:
-	lw	$2,24(fp)
-	lw	$3,28(fp)
-	sltu	$2,$2,$3
-	bne	$2,$0,$L14
-	b	$L12
-$L14:
-	lw	$2,24(fp)
-	lw	$3,32(fp)
-	sltu	$2,$2,$3
-	bne	$2,$0,$L15
-	li	$2,1			# 0x1
-	sw	$2,36(fp)
-	b	$L10
-$L15:
-	lw	$3,56(fp)
-	lw	$2,24(fp)
-	addu	$4,$3,$2
-	lw	$3,60(fp)
-	lw	$2,24(fp)
-	addu	$2,$3,$2
-	lb	$3,0($4)
-	lb	$2,0($2)
-	slt	$2,$3,$2
-	beq	$2,$0,$L16
-	li	$2,-1			# 0xffffffffffffffff
-	sw	$2,36(fp)
-	b	$L10
-$L16:
-	lw	$3,56(fp)
-	lw	$2,24(fp)
-	addu	$4,$3,$2
-	lw	$3,60(fp)
-	lw	$2,24(fp)
-	addu	$2,$3,$2
-	lb	$3,0($4)
-	lb	$2,0($2)
-	slt	$2,$2,$3
-	beq	$2,$0,$L13
-	li	$2,1			# 0x1
-	sw	$2,36(fp)
-	b	$L10
-$L13:
-	lw	$2,24(fp)
-	addu	$2,$2,1
-	sw	$2,24(fp)
-	b	$L11
-$L12:
-	lw	$2,28(fp)
-	lw	$3,32(fp)
-	sltu	$2,$2,$3
-	beq	$2,$0,$L18
-	li	$2,-1			# 0xffffffffffffffff
-	sw	$2,36(fp)
-	b	$L10
-$L18:
-	sw	$0,36(fp)
-$L10:
-	lw	$2,36(fp)
-	move	sp,fp
-	lw	$31,48(sp)
-	lw	fp,44(sp)
-	addu	sp,sp,56
-	j	$31
-	.end	compare_s
-	.size	compare_s, .-compare_s
-	.align	2
+/************************************************************************
+Definicion de la funcion compare_s. Esta funcion es una implementacion propia
+de la funcion de la libreria estandar strcmp, determinando el orden
+lexicografico entre dos cadenas. Devuelve -1 si la primer cadena es anterior a
+la segunda, 0 si son equivalentes y 1 si la segunda cadena es anterior a la
+primera.
+
+El prototipo en C es como sigue:
+
+int compare_s(char* start, char* end);
+************************************************************************/
+compare_s: .ent compare_s
+
+  # Frame de tamanio 0
+  .frame fp,0,ra
+
+COMP_LOOP:
+  # Se cargan los bytes apuntados por los argumentos
+  lb t0, (a0)
+  lb t1, (a1)
+  # Si el primer caracter es menor que el segundo, la primer cadena es anterior
+  # a la segunda
+  slt t2, t0, t1
+  bne t2, zero, COMP_RETLT
+  # Si ambos son iguales, significa que tienen la misma longitud y ninguno de
+  # los caracteres recorridos hasta el momento fueron distintos.
+  beq t0, t1, COMP_EQUALS
+  # Si el primer caracter es superior al segundo, la primer cadena es posterior
+  # a la segunda. Continuamos en la siguiente seccion
+
+COMP_RETGT:
+  # Si llegamos aqui es porque la segunda cadena es anterior a la primera
+  li v0, 1
+  b COMP_RETURN
+
+COMP_RETLT:
+  # Si llegamos aqui es porque la primer cadena es anterior a la segunda
+  li v0, -1
+  b COMP_RETURN
+
+COMP_RETEQ:
+  # Si llegamos aqui es porque ambas cadenas son iguales
+  move v0, zero
+  b COMP_RETURN
+
+COMP_EQUALS:
+  # Si llegamos aqui es porque los caracteres son iguales. Si ambos son cero,
+  # todos los caracteres procesados fueron iguales y llegamos simultaneamente
+  # al final de ambas cadenas, por lo que las cadenas son iguales.
+  or t2, t0, t1
+  beq t2, zero, COMP_RETEQ
+  # Si no son ambos cero pero el primero si es cero, estamos al final de la
+  # primer cadena. La primer cadena esta contenida en la segunda, por lo que es
+  # menor
+  beq t0, zero, COMP_RETLT
+  # Si no son ambos cero pero el segundo si es cero, estamos al final de la
+  # segunda cadena. La segunda cadena esta contenida en la primera, por lo que
+  # es menor
+  beq t1, zero, COMP_RETGT
+  # Si llegamos aqui es porque todavia hay mas caracteres que comparar, por lo
+  # que avanzamos los punteros a los caracteres y continuamos
+  addu a0, a0, 1
+  addu a1, a1, 1
+  b COMP_LOOP
+
+COMP_RETURN:
+  jr ra
+.end compare_s
+.size compare_s, .-compare_s
+
 	.globl	swap_s
 	.ent	swap_s
 swap_s:
