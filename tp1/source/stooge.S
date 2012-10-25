@@ -106,51 +106,41 @@ COMP_RETURN:
 .end compare_s
 .size compare_s, .-compare_s
 
-	.globl	swap_s
-	.ent	swap_s
-swap_s:
-	.frame	fp,24,$31		# vars= 8, regs= 2/0, args= 0, extra= 8
-	.mask	0x50000000,-4
-	.fmask	0x00000000,0
-	.set	noreorder
-	.cpload	$25
-	.set	reorder
-	subu	sp,sp,24
-	.cprestore 0
-	sw	fp,20(sp)
-	sw	$28,16(sp)
-	move	fp,sp
-	sw	$4,24(fp)
-	sw	$5,28(fp)
-	sw	$6,32(fp)
-	lw	$2,28(fp)
-	sll	$3,$2,2
-	lw	$2,24(fp)
-	addu	$2,$3,$2
-	lw	$2,0($2)
-	sw	$2,8(fp)
-	lw	$2,28(fp)
-	sll	$3,$2,2
-	lw	$2,24(fp)
-	addu	$4,$3,$2
-	lw	$2,32(fp)
-	sll	$3,$2,2
-	lw	$2,24(fp)
-	addu	$2,$3,$2
-	lw	$2,0($2)
-	sw	$2,0($4)
-	lw	$2,32(fp)
-	sll	$3,$2,2
-	lw	$2,24(fp)
-	addu	$3,$3,$2
-	lw	$2,8(fp)
-	sw	$2,0($3)
-	move	sp,fp
-	lw	fp,20(sp)
-	addu	sp,sp,24
-	j	$31
-	.end	swap_s
-	.size	swap_s, .-swap_s
+/************************************************************************
+Definicion de la funcion swap_s. Esta funcion intercambia dos punteros ubicados
+en dos indices dados de un array de strings determinado.
+
+El prototipo en C es como sigue:
+
+void swap_c(char **data, unsigned int a, unsigned int b);
+************************************************************************/
+swap_s: .ent swap_s
+
+  # Frame de tamanio 0
+  .frame fp,0,ra
+
+  # Se computa la direccion en memoria donde se encuentra el primer elemento a
+  # intercambiar: a1 = a0 + (a1 * 4)
+  sll t0, a1, 2
+  addu a1, a0, t0
+
+  # Se computa la direccion en memoria donde se encuentra el segundo elemento a
+  # intercambiar: a2 = a0 + (a2 * 4)
+  sll t0, a2, 2
+  addu a2, a0, t0
+
+  # Se cargan en memoria los valores a intercambiar
+  lw t0, (a1)
+  lw t1, (a2)
+
+  # Se guardan nuevamente en orden inverso
+  sw t0, (a2)
+  sw t1, (a1)
+
+  jr ra
+.end swap_s
+.size swap_s, .-swap_s
+
 	.align	2
 	.globl	sort_stooge_s
 	.ent	sort_stooge_s
