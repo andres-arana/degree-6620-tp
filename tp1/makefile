@@ -64,7 +64,7 @@ virtual-reset:
 	rm -rf ./gxemul/$(VIRTUAL)
 
 virtual-deploy-all:
-	scp -P 2222 -r makefile source root@127.0.0.1:/root/tp
+	scp -P 2222 -r makefile source data root@127.0.0.1:/root/tp
 
 virtual-connect:
 	ssh -p 2222 root@127.0.0.1
