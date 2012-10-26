@@ -65,20 +65,13 @@ La tarea `virtual-reset` elimina la virtual expandida a través de
 virtual será expandida nuevamente, de manera de poder contar con una virtual
 limpia cuando sea necesario.
 
-La tarea `virtual-deploy-all` copia los contenidos del trabajo práctico por
-`scp` al directorio `/root/tp` de la máquina virtual. Es necesario primero
-habilitar el puerto `2222` por ssh tunneling como se indico previamente. Por
-otro lado, la tarea `virtual-deploy-source` solo copia el makefile y los
-contenidos de la carpeta `source` al mismo directorio de la máquina virtual.
+La tarea `virtual-authkey` registra la public key de ssh del host local en la
+virtual, de manera de permitir ejecutar el resto de las tareas sin ingresar la
+contraseña de root `orga6620` cada vez.
 
-La tarea `virtual-connect` abre una conexión por ssh a la máquina virtual.
-Nuevamente, es necesario primero habilitar el puerto de conexión.
-
-A modo de ejemplo, para subir todo el trabajo práctico a la virtual y
-posteriormente conectarse por ssh a la misma es necesario ejecutar el siguiente
-comando:
-
-    make virtual-deploy-all virtual-connect
+La tarea `virtual-deploy` copia los contenidos del trabajo práctico por
+`scp` al directorio `/root/deploy` de la máquina virtual. Es necesario primero
+habilitar el puerto `2222` por ssh tunneling como se indico previamente.
 
 ### Generación de documentación
 
