@@ -19,7 +19,20 @@ int compare_s(char* start, char* end);
 compare_s: .ent compare_s
 
   # Frame size
-  .frame sp,0,ra
+  #   + 8 bytes SRA: gp, fp
+  .frame sp,8,ra
+
+  # Set up del global pointer
+  .set noreorder
+  .cpload jp
+  .set reorder
+
+  # Expandimos el stack
+  subu sp, sp, 8
+
+  # Grabamos los registros a preservar
+  .cprestore 4
+  sw fp, 0(sp)
 
 COMP_LOOP:
   # Se cargan los bytes apuntados por los argumentos
@@ -49,6 +62,11 @@ COMP_EQUALS:
   b COMP_LOOP
 
 COMP_RETURN:
+  # Teardown del stack
+  lw fp, 0(sp)
+
+  addu sp, sp, 8
+
   jr ra
 .end compare_s
 .size compare_s, .-compare_s
