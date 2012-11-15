@@ -3,9 +3,9 @@
 /************************************************************************
 Definicion de la funcion compare_s. Esta funcion es una implementacion propia
 de la funcion de la libreria estandar strcmp, determinando el orden
-lexicografico entre dos cadenas. Devuelve -1 si la primer cadena es anterior a
-la segunda, 0 si son equivalentes y 1 si la segunda cadena es anterior a la
-primera.
+lexicografico entre dos cadenas. Devuelve un numero negativo si la primer
+cadena es anterior a la segunda, 0 si son equivalentes y un numero positivo si
+la segunda cadena es anterior a la primera.
 
 El prototipo en C es como sigue:
 
@@ -22,45 +22,23 @@ COMP_LOOP:
   lb t1, (a1)
   # Si el primer caracter es menor que el segundo, la primer cadena es anterior
   # a la segunda
-  slt t2, t0, t1
-  bne t2, zero, COMP_RETLT
+  subu v0, t0, t1
+  bltz v0, COMP_RETURN
   # Si ambos son iguales, significa que tienen la misma longitud y ninguno de
   # los caracteres recorridos hasta el momento fueron distintos.
-  beq t0, t1, COMP_EQUALS
-  # Si el primer caracter es superior al segundo, la primer cadena es posterior
-  # a la segunda. Continuamos en la siguiente seccion
-
-COMP_RETGT:
-  # Si llegamos aqui es porque la segunda cadena es anterior a la primera
-  li v0, 1
-  b COMP_RETURN
-
-COMP_RETLT:
-  # Si llegamos aqui es porque la primer cadena es anterior a la segunda
-  li v0, -1
-  b COMP_RETURN
-
-COMP_RETEQ:
-  # Si llegamos aqui es porque ambas cadenas son iguales
-  move v0, zero
+  beqz v0, COMP_EQUALS
+  # Si llegamos aqui es porque el primer caracter es superior al segundo y la
+  # primer cadena es posterior a la segunda. Continuamos en la siguiente
+  # seccion
   b COMP_RETURN
 
 COMP_EQUALS:
   # Si llegamos aqui es porque los caracteres son iguales. Si ambos son cero,
   # todos los caracteres procesados fueron iguales y llegamos simultaneamente
   # al final de ambas cadenas, por lo que las cadenas son iguales.
-  or t2, t0, t1
-  beq t2, zero, COMP_RETEQ
-  # Si no son ambos cero pero el primero si es cero, estamos al final de la
-  # primer cadena. La primer cadena esta contenida en la segunda, por lo que es
-  # menor
-  beq t0, zero, COMP_RETLT
-  # Si no son ambos cero pero el segundo si es cero, estamos al final de la
-  # segunda cadena. La segunda cadena esta contenida en la primera, por lo que
-  # es menor
-  beq t1, zero, COMP_RETGT
+  beq t0, zero, COMP_RETURN
   # Si llegamos aqui es porque todavia hay mas caracteres que comparar, por lo
-  # que avanzamos los punteros a los caracteres y continuamos
+  # que avanzamos los punteros a los caracteres subsiguientes y continuamos
   addu a0, a0, 1
   addu a1, a1, 1
   b COMP_LOOP
