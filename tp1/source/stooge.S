@@ -1,4 +1,9 @@
+/* Nomenclatura de registros */
 #include <mips/regdef.h>
+
+/* Nomenclatura de registros adicionales no incluidos en regdef */
+#define fp  $30
+#define jp  $25
 
 /************************************************************************
 Definicion de la funcion compare_s. Esta funcion es una implementacion propia
@@ -95,13 +100,13 @@ void sort_stooge_s(char **data, unsigned int start, unsigned int end);
 sort_stooge_s: .ent sort_stooge_s
 
   # Frame size
-  #   + 16 bytes SRA: ra, gp, s0, padding
+  #   + 16 bytes SRA: ra, gp, s0, fp
   #   + 16 bytes ABA: a3, a2, a1, a0
   .frame sp,32,ra
 
   # Set up del global pointer
   .set noreorder
-  .cpload t9
+  .cpload jp
   .set reorder
 
   # Expandimos el stack
@@ -111,6 +116,7 @@ sort_stooge_s: .ent sort_stooge_s
   sw ra, 28(sp)
   .cprestore 24
   sw s0, 20(sp)
+  sw fp, 16(sp)
 
   # Grabamos los argumentos para preservarlos
   sw a0, 32(sp)
@@ -129,8 +135,8 @@ sort_stooge_s: .ent sort_stooge_s
   # Invocamos a la funcion compare_s
   move a0, a1
   move a1, a2
-  la t9, compare_s
-  jal ra, t9
+  la jp, compare_s
+  jal ra, jp
 
   # Restauramos los registros de argumentos
   lw a0, 32(sp)
@@ -139,8 +145,8 @@ sort_stooge_s: .ent sort_stooge_s
 
   # Si el resultado es mayor o igual a cero hay que realizar un swap
   blez v0, SORT_NOSWAP
-  la t9, swap_s
-  jal ra, t9
+  la jp, swap_s
+  jal ra, jp
 
   # Restauramos los registros de argumentos
   lw a0, 32(sp)
@@ -164,8 +170,8 @@ SORT_NOSWAP:
 
   # Invocacion recursiva en la primera parte del array
   subu a2, a2, s0
-  la t9, sort_stooge_s
-  jal ra, t9
+  la jp, sort_stooge_s
+  jal ra, jp
 
   # Restauramos los registros de argumentos
   lw a0, 32(sp)
@@ -174,8 +180,8 @@ SORT_NOSWAP:
 
   # Invocacion recursiva en la segunda parte del array
   addu a1, a1, s0
-  la t9, sort_stooge_s
-  jal ra, t9
+  la jp, sort_stooge_s
+  jal ra, jp
 
   # Restauramos los registros de argumentos
   lw a0, 32(sp)
@@ -184,13 +190,14 @@ SORT_NOSWAP:
 
   # Invocacion recursiva en la primera parte del array nuevamente
   subu a2, a2, s0
-  la t9, sort_stooge_s
-  jal ra, t9
+  la jp, sort_stooge_s
+  jal ra, jp
 
 SORT_NOREC:
   # Teardown del stack
   lw ra, 28(sp)
   lw s0, 20(sp)
+  lw fp, 16(sp)
 
   addu sp, sp, 32
 
