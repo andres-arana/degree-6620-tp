@@ -82,7 +82,20 @@ void swap_c(char **data, unsigned int a, unsigned int b);
 swap_s: .ent swap_s
 
   # Frame size
-  .frame sp,0,ra
+  #   + 8 bytes SRA: gp, fp
+  .frame sp,8,ra
+
+  # Set up del global pointer
+  .set noreorder
+  .cpload jp
+  .set reorder
+
+  # Expandimos el stack
+  subu sp, sp, 8
+
+  # Grabamos los registros a preservar
+  .cprestore 4
+  sw fp, 0(sp)
 
   # Se computa la direccion en memoria donde se encuentra el primer elemento a
   # intercambiar: a1 = a0 + (a1 * 4)
@@ -101,6 +114,11 @@ swap_s: .ent swap_s
   # Se guardan nuevamente en orden inverso
   sw t0, (a2)
   sw t1, (a1)
+
+  # Teardown del stack
+  lw fp, 0(sp)
+
+  addu sp, sp, 8
 
   jr ra
 .end swap_s
