@@ -95,7 +95,7 @@ void sort_stooge_s(char **data, unsigned int start, unsigned int end);
 sort_stooge_s: .ent sort_stooge_s
 
   # Frame size
-  #   + 16 bytes RTA: ra, gp, s0, padding
+  #   + 16 bytes SRA: ra, gp, s0, padding
   #   + 16 bytes ABA: a3, a2, a1, a0
   .frame sp,32,ra
 
@@ -160,7 +160,6 @@ SORT_NOSWAP:
   addu t0, t0, 1
   li t1, 3
   divu t0, t1
-  nop # Necesario para asegurar consistencia de LO
   mflo s0
 
   # Invocacion recursiva en la primera parte del array
