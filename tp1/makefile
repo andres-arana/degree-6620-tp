@@ -64,7 +64,7 @@ virtual-reset:
 	rm -rf ./gxemul/$(VIRTUAL)
 
 virtual-authkey:
-	cat ~/.ssh/id_rsa.pub | ssh -p 2222 root@127.0.0.1 "rm .ssh/authorized_keys; mkdir -p ~/.ssh; cat >> ~/.ssh/authorized_keys"
+	cat ~/.ssh/id_rsa.pub | ssh -p 2222 root@127.0.0.1 "rm -rf .ssh/authorized_keys; mkdir -p ~/.ssh; cat >> ~/.ssh/authorized_keys"
 
 virtual-deploy:
 	ssh -p 2222 root@127.0.0.1 "rm -rf ~/deploy; mkdir -p ~/deploy;"
