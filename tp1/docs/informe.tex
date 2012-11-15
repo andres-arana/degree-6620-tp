@@ -160,16 +160,16 @@ función se describe a continuación en la figura \ref{fig:stackstooge}.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\textwidth]{docs/stoogesort_diagrama.png}
-  \caption{Diagrama de stack para la función de Stoogesort} \label{fig:stackstooge}
+  \includegraphics[width=\textwidth]{docs/stack_stooge_sort_s.png}
+  \caption{Diagrama de stack para la función stooge\_sort\_s} \label{fig:stackstooge}
 \end{figure}
 
 \FloatBarrier
 
-Se reservan 16 bytes para el área de RTA: 4 bytes para salvar el registro ra en
+Se reservan 16 bytes para el área de SRA: 4 bytes para salvar el registro ra en
 llamadas a otras funciones, 4 bytes para salvar el registro gp, 4 bytes para
 preservar el registro s0 utilizado en varios de los cálculos de la función y
-finalmente 4 bytes de padding para hacer el stack double-word aligned.
+finalmente 4 bytes para el registro fp.
 
 Por otro lado, dado que las funciones invocadas desde esta no poseen nunca más
 de tres argumentos, se reservan \(4 x 4\) bytes en concepto de ABA para ser
@@ -181,26 +181,40 @@ de las invocaciones recursivas mencionadas anteriormente.
 \subsection{compare\_s}
 
 Esta función compara byte a byte dos cadenas de caracteres terminadas en 0
-(siguiendo la convención de C). Devuelve -1 si la primer cadena es anterior a
-la segunda, 0 si son iguales o 1 si la primer cadena es posterior a la segunda.
+(siguiendo la convención de C). Devuelve un número negativo si la primer cadena
+es anterior a la segunda, 0 si son iguales o un número positivo si la primer
+cadena es posterior a la segunda. El stack frame típico de la función se
+describe a continuación en la figura \ref{fig:stackcompare}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{docs/stack_compare_s.png}
+  \caption{Diagrama de stack para la función compare\_s} \label{fig:stackcompare}
+\end{figure}
+
+\FloatBarrier
 
 Esta función fue implementada como leaf, sin invocar otras funciones
-auxiliares. Además, no se hace acceso en ningún momento a memoria compartida ni
-global, y todos los cálculos pudieron hacerse utilizando los registros
-temporales. Por lo tanto, de acuerdo a la ABI O32 utilizada para implementar el
-trabajo práctico, no es necesario salvar en stack ningún valor, ni siquiera el
-registro gp.
+auxiliares. Se reservan 8 bytes para salvar gp y fp. No es necesario reservar
+espacio adicional para ABA.
 
 \subsection{swap\_s}
 
 Esta función intercambia las cadenas ubicadas en dos posiciones dadas dentro de
-una tabla de cadenas.
+una tabla de cadenas. El stack frame típico de la función se describe a
+continuación en la figura \ref{fig:stackswap}.
 
-Nuevamente, todos los cálculos se realizaron utilizando registros temporales,
-por lo que no fue necesario guardar ningún registro en stack para su posterior
-restauración. Tampoco se hizo acceso a memoria compartida o global, por lo que
-no fue necesario guardar el registro gp. De esta manera se evitó tener que
-reservar y acceder a la memoria para administrar el stack frame de la función.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{docs/stack_swap_s.png}
+  \caption{Diagrama de stack para la función swap\_s} \label{fig:stackswap}
+\end{figure}
+
+\FloatBarrier
+
+Nuevamente, esta función leaf no requiere reservar espacio adicional para ABA.
+El stack es idéntico al de la función compare\_s, con 8 bytes para salvar gp y
+fp únicamente.
 
 \section{Compilación}
 
@@ -261,7 +275,9 @@ ejecución realizado para los diferentes casos contemplados.
 
 \subsection{Análisis previo}\label{sec:tiempos}
 
-El análisis de tiempos de ejecución se focalizará en comparar la performance de la implementación en assembly descripta anteriormente contra diferentes versiones de escencialmente el mismo sistema.
+El análisis de tiempos de ejecución se focalizará en comparar la performance de
+la implementación en assembly descripta anteriormente contra diferentes
+versiones de esencialmente el mismo sistema.
 
 Primero se comparará el sistema contra la implementación realizada en el
 Trabajo Práctico 0 del mismo algoritmo pero en C. Por un lado, al compilar esta
@@ -283,7 +299,7 @@ práctico citado.
 
 \subsection{Experimentos}
 
-Se generó un archivo de 32\(Kb\) ordenado al azar constituído por 220 líneas de
+Se generó un archivo de 32\(Kb\) ordenado al azar constituido por 220 líneas de
 texto. El mismo se utilizó como entrada para cada uno de los ejecutables
 descriptos en la sección \ref{sec:tiempos}. En el cuadro \ref{tab:resultados}
 se detallan los resultados obtenidos.
@@ -314,7 +330,7 @@ cerca de nuestra implementación particular.
 
 Por otro lado, como era de esperarse, la implementación por \textit{quicksort}
 fue muchísimo más performante que nuestra versión optimizada manualmente,
-tomando menos del 10\% del tiempo de ejecución de nuestar versión incluso en la
+tomando menos del 10\% del tiempo de ejecución de nuestra versión incluso en la
 versión compilada sin optimizaciones del compilador.
 
 \section{Conclusiones}
@@ -326,12 +342,12 @@ de la dificultad inherente en este desarrollo se encuentra en la necesidad de
 implementar, administrar y controlar la infraestructura de los llamados a
 funciones y otros artefactos básicos de integración. Por otro lado, el código
 de ensamblador no provee muchas de las abstracciones básicas que se dan por
-sentado en los lenguajes de alto nivel, como bloques codicionales y conversión
+sentado en los lenguajes de alto nivel, como bloques condicionales y conversión
 de tipos, lo que hizo que la implementación del algoritmo sea aún más
-dificultoso: el \textit{qué} estabamos haciendo se mezclaba con el
+dificultoso: el \textit{qué} estábamos haciendo se mezclaba con el
 \textit{cómo}. Por último, la ausencia de mecanismos de seguridad presentes en
 lenguajes compilados, como la comprobación de tipos, prototipos funcionales y
-declaratividad en la asignación de nombres a variables incrementó la cantidad
+declarativas en la asignación de nombres a variables incrementó la cantidad
 de bugs con los que nos topamos, lo que dio a lugar a más trabajo de depuración
 y testing.
 
@@ -343,14 +359,14 @@ de errores. Si bien puede atribuirse esto a la falta de experiencia en
 programación a bajo nivel, el resultado sigue siendo que el desarrollo es mucho
 más costoso.
 
-Teniendo en cuena estos factores, entendemos que es imperativo el análisis de
+Teniendo en cuenta estos factores, entendemos que es imperativo el análisis de
 costo-beneficio al decidirse por una implementación de este tipo. En nuestro
 caso particular, la diferencia en tiempo de ejecución de nuestra solución
 contra la producida por un compilador con todas las optimizaciones disponibles
 habilitadas está dentro del 10\%. ¿Justifica el enorme costo adicional esa
 ganancia?
 
-Analizando el resto de los resultados concluímos que la versión implementada en
+Analizando el resto de los resultados concluimos que la versión implementada en
 C con \textit{quicksort}, incluso cuando no se aplicaron optimizaciones de
 compilador, era un orden de magnitud más eficiente que la versión implementada
 en assembly. Esta versión fue desarrollada, depurada y testeada por un
