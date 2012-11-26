@@ -10,7 +10,7 @@ trabajos prácticos obligatorios para firmar la cursada de la materia:
 
 * TP0: Comparación de performance de Quicksort vs. Stooge sort
 * TP1: Optimización de Stooge sort en assembly MIPS
-* TP2: TBD
+* TP2: Optimización de wator simulator
 
 Adicionalmente se incluyen materiales adicionales teóricos y prácticos en las
 subcarpetas correspondientes.
