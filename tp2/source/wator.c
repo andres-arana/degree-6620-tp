@@ -80,7 +80,7 @@ int myrand (int max)
   return rand () % max;
 }
 
-int choose_fish (int i, int j)
+int choose_random (int i, int j, int kind)
 {
   int k = 0;
   int dir;
@@ -89,26 +89,7 @@ int choose_fish (int i, int j)
     int npi = ni (i, dir);
     int npj = nj (j, dir);
     struct animal * t = &wator[npi][npj];
-    if  (t->kind == FISH) {
-      dirs[k] = dir;
-      k++;
-    }
-  }
-  if (k == 0)
-    return REST;
-  return dirs[myrand (k)];
-}
-
-int choose_empty (int i, int j)
-{
-  int k = 0;
-  int dir;
-  int dirs[4];
-  for (dir=0; dir < 4; dir++) {
-    int npi = ni (i, dir);
-    int npj = nj (j, dir);
-    struct animal * t = &wator[npi][npj];
-    if (t->kind == EMPTY) {
+    if  (t->kind == kind) {
       dirs[k] = dir;
       k++;
     }
@@ -129,7 +110,7 @@ int move_to_fish (int i, int j)
   t = &wator[i][j];
   assert (t->kind == SHARK);
 
-  dir = choose_fish (i, j);
+  dir = choose_random (i, j, FISH);
   if (dir == REST)
     return 0;
   npi = ni (i, dir);
@@ -155,7 +136,7 @@ int move_to_empty (int i, int j)
   t = &wator[i][j];
   assert ((t->kind == SHARK) || (t->kind == FISH)); 
 
-  dir = choose_empty (i, j);
+  dir = choose_random (i, j, EMPTY);
   if (dir == REST)
     return 0;
   npi = ni (i, dir);
