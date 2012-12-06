@@ -34,7 +34,7 @@ prof: clean
 
 time: clean
 	ACFLAGS="-O3" make
-	bash -c "for x in {1..3000}; do time ./build/wator > /dev/null; done" 2> build/perf/time
+	bash -c "for x in {1..500}; do time ./build/wator > /dev/null; done" 2> build/perf/time
 	ruby perf/analyze.rb
 
 cache: clean
