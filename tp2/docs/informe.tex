@@ -287,6 +287,19 @@ cada celda de la matriz, de manera de aumentar la cantidad de celdas que entran
 en cada linea de cache. Es posible disminuir a la mitad el tamaño eligiendo los
 tipos de datos adecuados.
 
+\subsubsection{Implementación}
+
+\lstinputlisting{opt/04tam.diff}
+
+\subsection{Resultados obtenidos}
+
+Si bien se obtuvo un tiempo de ejecución ligeramente mayor (con 68 milisegundos
+contra 67 milisegundos antes de esta optimización), se obtuvo una mejora
+sustancial en el miss rate, bajando a 22\% desde 27\%. Consideramos que una
+mejora de 5\% en el miss rate como la que experimentamos implicaría, en la
+arquitectura propuesta por el enunciado, una disminución en el tiempo de
+ejecución que superaría ampliamente el costo pagado.
+
 \subsection{Separación de datos por estrategia de acceso a memoria}
 
 \subsubsection{Análisis y propuesta}

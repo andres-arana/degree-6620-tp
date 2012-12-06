@@ -1,0 +1,37 @@
+diff --git a/tp2/source/wator.c b/tp2/source/wator.c
+index 5119021..3ea7e20 100644
+--- a/tp2/source/wator.c
++++ b/tp2/source/wator.c
+@@ -11,10 +11,10 @@
+ #define FISH  2
+ 
+ struct animal {
+-  int kind;
+-  int age;
+-  int hunger;
+-  int todo;
++  unsigned char kind;
++  unsigned char age;
++  unsigned char hunger;
++  unsigned char todo;
+ } animal;
+ 
+ typedef struct {
+@@ -71,7 +71,7 @@ int nj (int j, int dir)
+ 
+ int newcount = 0;
+ 
+-void new_animal (int i, int j, char kind)
++void new_animal (int i, int j, unsigned char kind)
+ {
+   struct animal *t = & wator[i][j] ;
+   assert (wator[i][j].kind == EMPTY);
+@@ -88,7 +88,7 @@ int myrand (int max)
+   return rand () % max;
+ }
+ 
+-pos choose_random (int i, int j, int kind)
++pos choose_random (int i, int j, unsigned char kind)
+ {
+   int k = 0;
+   int dir;
