@@ -38,14 +38,9 @@ time: clean
 	ruby perf/analyze.rb
 
 cachegrind: clean
-	ACFLAGS="-O3 -pg" make
-	valgrind --tool=cachegrind --D1=$(CACHE_SIZE),$(CACHE_WSA),$(CACHE_LINE) ./build/wator > /dev/null build/cachegrind/wator.txt
-	echo;
-	echo "Listando Misses de cache";
-	echo "------------------------";
-	echo;
-	grep "[^ ].*\ [^0].*\ " build/cachegrind/wator.txt
-	mv cachegrind.out* build/cachegrind
+	ACFLAGS="-O3" make
+	valgrind --tool=cachegrind --D1=$(CACHE_SIZE),$(CACHE_WSA),$(CACHE_LINE) ./build/wator > /dev/null
+	rm cachegrind.out.*
 
 doc: prepare
 	pandoc README.md -o build/doc/README.pdf
