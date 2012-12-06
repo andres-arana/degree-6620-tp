@@ -240,7 +240,7 @@ acotada.
 \subsection{Resultados obtenidos}
 
 Como se había previsto, se obtuvo una mejora marginal de performance, con 68
-milisegundos de ejecución representando un speed up de \(1.02\). El miss rate,
+milisegundos de ejecución representando un speed up de \(1.03\). El miss rate,
 por otro lado, se mantuvo contante.
 
 \subsection{Recálculo de ubicaciones en interface de \textit{choose\_random}}
@@ -260,6 +260,15 @@ contenga las posiciones calculadas originalmente. De esta manera se evita tener
 que recalcular la posición desde las funciones cliente de
 \textit{choose\_random}, disminuyendo de esta manera la cantidad de operaciones
 necesarias para realizar los cálculos requeridos.
+
+\subsubsection{Implementación}
+
+\lstinputlisting{opt/03recalculo.diff}
+
+\subsection{Resultados obtenidos}
+
+Nuevamente se tuvo una mejora marginal, con un tiempo de ejecución de 67
+milisegundos y un speed up de \(1.01\), sin cambios en el miss rate.
 
 \subsection{Disminuir el tamaño por celda}
 

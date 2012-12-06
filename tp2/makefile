@@ -42,6 +42,9 @@ cache: clean
 	valgrind --tool=cachegrind --D1=$(CACHE_SIZE),$(CACHE_WSA),$(CACHE_LINE) ./build/wator > /dev/null
 	rm cachegrind.out.*
 
+diff:
+	git diff source/wator.c > opt/current
+
 doc: prepare
 	pandoc README.md -o build/doc/README.pdf
 	pdflatex --output-directory build/doc docs/informe.tex

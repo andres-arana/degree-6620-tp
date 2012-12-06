@@ -17,6 +17,12 @@ struct animal {
   int todo;
 } animal;
 
+typedef struct {
+  unsigned char i;
+  unsigned char j;
+  char valid;
+} pos;
+
 #define MAXI 32
 #define MAXJ 32
 #define HBRUT 10
@@ -82,23 +88,28 @@ int myrand (int max)
   return rand () % max;
 }
 
-int choose_random (int i, int j, int kind)
+pos choose_random (int i, int j, int kind)
 {
   int k = 0;
   int dir;
-  int dirs[4];
+  pos options[4];
   for (dir=0; dir < 4; dir++) {
     int npi = ni (i, dir);
     int npj = nj (j, dir);
     struct animal * t = &wator[npi][npj];
     if  (t->kind == kind) {
-      dirs[k] = dir;
+      options[k].i = npi;
+      options[k].j = npj;
+      options[k].valid = 1;
       k++;
     }
   }
-  if (k == 0)
-    return REST;
-  return dirs[myrand (k)];
+  if (k == 0) {
+      pos result;
+      result.valid = 0;
+      return result;
+  }
+  return options[myrand (k)];
 }
 
 int freecount = 0;
@@ -106,17 +117,17 @@ int freecount = 0;
 int move_to_fish (int i, int j)
 {
   int npi, npj;
-  int dir;
+  pos np;
   struct animal * t;
 
   t = &wator[i][j];
   assert (t->kind == SHARK);
 
-  dir = choose_random (i, j, FISH);
-  if (dir == REST)
+  np = choose_random (i, j, FISH);
+  if (!np.valid)
     return 0;
-  npi = ni (i, dir);
-  npj = nj (j, dir);
+  npi = np.i;
+  npj = np.j;
   assert (wator[npi][npj].kind == FISH);
   freecount++;
   memcpy  (&wator[npi][npj], t,sizeof(animal));
@@ -135,17 +146,17 @@ int move_to_fish (int i, int j)
 int move_to_empty (int i, int j)
 {
   int npi, npj;
-  int dir;
+  pos np;
   struct animal * t;
 
   t = &wator[i][j];
   assert ((t->kind == SHARK) || (t->kind == FISH)); 
 
-  dir = choose_random (i, j, EMPTY);
-  if (dir == REST)
+  np = choose_random (i, j, EMPTY);
+  if (!np.valid)
     return 0;
-  npi = ni (i, dir);
-  npj = nj (j, dir);
+  npi = np.i;
+  npj = np.j;
   assert (wator[npi][npj].kind == EMPTY);
   memcpy(&wator[npi][npj], t, sizeof(animal));
   if (npi > i || npj > j) {
