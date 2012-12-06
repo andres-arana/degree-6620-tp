@@ -1,0 +1,39 @@
+diff --git a/tp2/source/wator.c b/tp2/source/wator.c
+index e5e964e..b340b75 100644
+--- a/tp2/source/wator.c
++++ b/tp2/source/wator.c
+@@ -19,7 +19,9 @@ struct animal {
+ 
+ #define MAXI 32
+ #define MAXJ 32
+-int HBRUT, FBRUT, FASTEN;
++#define HBRUT 10
++#define FBRUT 3
++#define FASTEN 3
+ 
+ struct animal wator[MAXI][MAXJ] ;
+ 
+@@ -214,13 +216,9 @@ void show_wator ()
+   newcount = freecount = 0;
+ }
+ 
+-void init_wator (int maxi, int maxj, int hbrut, int fbrut, int fasten)
++void init_wator ()
+ {
+   int i, j;
+-  HBRUT = hbrut;
+-  FBRUT = fbrut;
+-  FASTEN = fasten;
+-  assert (hbrut > FASTEN);
+   for (i=0; i<MAXI; ++i) {
+     for (j=0; j<MAXJ; ++j) {
+       int res = myrand (30);
+@@ -274,7 +272,7 @@ int main (int argc, char * argv[])
+     }
+   }
+ 
+-  init_wator (MAXI, MAXJ, 10, 3, 3);
++  init_wator ();
+   show_wator ();
+   for (i=0;i<1000;i++) {
+     moveall ();

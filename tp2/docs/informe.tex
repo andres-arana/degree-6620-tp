@@ -32,6 +32,20 @@
 % Formato de párrafo
 \setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
 
+% Formato de listados de código
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\lstset{title=\lstname,
+  basicstyle=\footnotesize,
+  showspaces=false,
+  showstringspaces=false,
+  breaklines=true,
+  commentstyle=\color{gray},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=5pt,
+  frame=single
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Título
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +166,11 @@ está basada en el gran impacto que tienen los tiempos de acceso a memoria en el
 tiempo de ejecución del programa. Cabe destacar que esta priorización no es
 fija, sino que se evalua con criterio: si disminuir el miss rate en un
 \(0.01\%\) implica realizar el doble de operaciones, quizás no se observe una
-mejora en el tiempo de ejecución sino todo lo contrario.
+mejora en el tiempo de ejecución sino todo lo contrario. Por otro lado, al
+realizar la medición de tiempos de ejecución en una arquitectura con una
+estructura jerárquica de memoria completamente diferente a la propuesta por el
+trabajo práctico, se espera que disminuir el miss rate no influya directamente,
+en esta arquitectura, en el tiempo final de ejecución.
 
 En las siguientes secciones discutimos algunas de las optimizaciones
 propuestas, ordenadas de menor a mayor complejidad, incluyendo los motivos que
@@ -178,6 +196,16 @@ ejecutadas para usar algún tipo de acceso a memoria inmediato, eliminando la
 necesidad de acceder a memoria para obtener los valores y las complicaciones
 adicionales de conflictos en el cache, así como también disminuyendo la
 cantidad de operaciones a realizar.
+
+\subsubsection{Implementación}
+
+\lstinputlisting{opt/01constants.diff}
+
+\subsection{Resultados obtenidos}
+
+Los resultados fueron bastante buenos para la simplicidad del cambio realizado.
+Se obtuvo un tiempo de ejecución promedio de 70 milisegundos, con un speed up
+de \(1.07\). Además el miss rate bajó de 30\% a 26\%.
 
 \subsection{Actualizar flag de proceso en una única iteración}
 
@@ -296,19 +324,6 @@ apreciable en la tasa de fallas en cache.
 \clearpage
 \section{Código fuente optimizado}\label{sec:source}
 \clearpage
-\definecolor{gray}{rgb}{0.5,0.5,0.5}
-\lstset{title=\lstname,
-  basicstyle=\footnotesize,
-  showspaces=false,
-  showstringspaces=false,
-  breaklines=true,
-  commentstyle=\color{gray},
-  numbers=left,
-  numberstyle=\tiny\color{gray},
-  numbersep=5pt,
-  frame=single
-}
-
 \lstinputlisting{source/wator.c}
 
 \end{document}
