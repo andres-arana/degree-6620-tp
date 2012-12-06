@@ -259,7 +259,6 @@ void moveall ()
 
 int main (int argc, char * argv[])
 {
-  char ch;
   int i;
   srand (time (NULL));
   fd = -1;
