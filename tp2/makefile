@@ -3,11 +3,14 @@ OBJ = build/obj/wator.o
 CC=gcc
 CP=cp
 CFLAGS=-I./source -Wall $(ACFLAGS)
+CACHE_SIZE=256
+CACHE_LINE=64
+CACHE_WSA=2
 
 build: prepare build/wator
 
 build/wator: $(OBJ)
-	gcc -o $@ $(OBJ) $(CFLAGS)
+	$(CC) -o $@ $(OBJ) $(CFLAGS)
 
 build/obj/wator.o: source/wator.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -18,9 +21,10 @@ prepare:
 	-mkdir -p build/obj
 	-mkdir -p build/prof
 	-mkdir -p build/perf
+	-mkdir -p build/cachegrind
 
 clean:
-	rm -rf build tags
+	rm -rf build
 
 prof: clean
 	ACFLAGS="-O3 -pg" make
@@ -33,6 +37,16 @@ time: clean
 	bash -c "for x in {1..3000}; do time ./build/wator > /dev/null; done" 2> build/perf/time
 	ruby perf/analyze.rb
 
+cachegrind: clean
+	ACFLAGS="-O3 -pg" make
+	valgrind --tool=cachegrind --D1=$(CACHE_SIZE),$(CACHE_WSA),$(CACHE_LINE) ./build/wator > /dev/null build/cachegrind/wator.txt
+	echo;
+	echo "Listando Misses de cache";
+	echo "------------------------";
+	echo;
+	grep "[^ ].*\ [^0].*\ " build/cachegrind/wator.txt
+	mv cachegrind.out* build/cachegrind
+
 doc: prepare
 	pandoc README.md -o build/doc/README.pdf
 	pdflatex --output-directory build/doc docs/informe.tex
@@ -40,7 +54,7 @@ doc: prepare
 	pdflatex --output-directory build/doc docs/informe.tex
 
 doc-preview: doc
-	evince build/doc/informe.pdf
+	evince build/doc/informe.pdf &
 
 doc-spell:
 	aspell -t check docs/informe.tex -d es
