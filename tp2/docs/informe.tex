@@ -116,15 +116,25 @@ el mapa, y unificándolas podemos tener un mejor resultado en el profiling a la
 hora de analizar si la estrategia de procesamiento en la búsqueda es la más
 adecuada a los parámetros de ejecución del sistema.
 
+Se promedio el tiempo de ejecución del sistema sobre 1000 ejecuciones para
+disminuir el error aleatorio en la medición, obteniendo una ejecución
+aproximada de 75 milisegundos. Se calculo también el miss rate promedio en el
+cache de nivel 1 de las características dadas en el enunciado utilizando
+\textit{cachegrind}, siendo este aproximadamente del 30\%.
+
 Se realizó un perfilado de la ejecución del programa utilizando la herramienta
 \textit{gprof}. La mayor parte del tiempo de ejecución está concentrado en 3
 funciones: \textit{choose\_random}, \textit{move\_to\_fish} y
 \textit{move\_to\_empty}. Es en estas tres funciones que nos detendremos
 inicialmente para analizar que propuestas de optimización pueden realizarse.
 
-\section{Optimizaciones propuestas}
+\section{Optimizaciones}
 
-En base a los resultados del perfilado sumarizados en la sección~\ref{sec:profinicial}, se determinaron diversas alternativas para intentar mejorar la performance del sistema en la arquitectura detallada en el enunciado del trabajo práctico. En cada una de ellas se intentó cumplir con uno de los dos objetivos enunciados a continuación:
+En base a los resultados del perfilado sumarizados en la
+sección~\ref{sec:profinicial}, se determinaron diversas alternativas para
+intentar mejorar la performance del sistema en la arquitectura detallada en el
+enunciado del trabajo práctico. En cada una de ellas se intentó cumplir con uno
+de los dos objetivos enunciados a continuación:
 
 \begin{enumerate}
 
@@ -148,23 +158,125 @@ En las siguientes secciones discutimos algunas de las optimizaciones
 propuestas, ordenadas de menor a mayor complejidad, incluyendo los motivos que
 podrían colaborar a obtener una mejora de performance así como las
 consecuencias de su implementación que llevan a empeorar el tiempo de ejecución
-del sistema. Seleccionaremos algunas de ellas para implementar sucesivamente
-sobre el código del trabajo práctico y realizar las mediciones pertinentes para
-confirmar o rechazar las predicciones propuesta, así como la eficiencia ganada
-al tomarlas.
+del sistema. En cada sección se detallará su implementación y las mediciones
+correspondientes a fin de confirmar o rechazar la optimización.
 
 \subsection{Reemplazar variables por constantes}
 
+\subsubsection{Análisis y propuesta}
+
+Existen varias variables a lo largo del código que en realidad son constantes
+propagadas. El ejemplo más simple de estas variables fijas son las variables de
+parámetros del ecosistema \textit{HBRUT}, \textit{FBRUT} y \textit{FASTEN}. Si
+bien están definidas como variables, en realidad se utilizan como constantes
+cuyo valor es determinado en tiempo de ejecución en la función \textit{main},
+al invocar a la rutina de incialización del mapa.
+
+Se pueden reemplazar estas variables casi sin esfuerzo por constantes. Se
+espera que este mecanismo permita al compilador optimizar las instrucciones
+ejecutadas para usar algún tipo de acceso a memoria inmediato, eliminando la
+necesidad de acceder a memoria para obtener los valores y las complicaciones
+adicionales de conflictos en el cache, así como también disminuyendo la
+cantidad de operaciones a realizar.
+
 \subsection{Actualizar flag de proceso en una única iteración}
+
+\subsubsection{Análisis y propuesta}
+
+Cada iteración consta de un proceso en el que se actualiza un flag en cada
+celda que marca la misma como pendiente. Luego, durante el proceso de cada
+celda se marca la misma como procesada a medida que se avanza sobre el mapa.
+
+El objetivo de dicho mecanismo es evitar procesar dos veces el mismo animal.
+Como el mapa se recorre desde la celda \((0, 0)\) por fila y columna, puede
+darse la situación de que un animal sea procesado y movido hacia posiciones que
+no han sido procesadas aún. Este flag evita que se procese dos veces un animal
+en estos casos.
+
+Es posible proceder de mantener todas las celdas que ya han sido procesadas y
+que no pueden ser reprocesadas como pendientes. El flag se actualiza como
+procesado únicamente cuando un animal se mueve a una posición que aún no ha
+sido procesada. De esta manera se evita hacer dos pasadas sobre la matriz en
+cada iteración, y más importante aún, se evita en muchos casos actualizar un
+valor con un write por cada elemento de la matriz.
+
+Por otro lado, dado que el valor del flag es leido inicialmente para evitar
+reprocesar, es muy posible que este valor ya esté en la cache al momento de
+hacer la escritura, por lo que la ganancia real de performance puede ser muy
+acotada.
 
 \subsection{Recálculo de ubicaciones en interface de \textit{choose\_random}}
 
+\subsubsection{Análisis y propuesta}
+
+La función \textit{choose\_random} computa las nuevas posiciones en i y j para
+cada dirección tentativa a elegir. Posteriormente elige una de estas posiciones
+al azar y devuelve la dirección correspondiente.
+
+Las funciones que invocan a \textit{choose\_random} toman la dirección devuelta
+por esta y recalculan nuevamente las posiciones en i y j para la dirección
+elegida.
+
+Es posible devolver una estructura desde la función, equivalente a un word, que
+contenga las posiciones calculadas originalmente. De esta manera se evita tener
+que recalcular la posición desde las funciones cliente de
+\textit{choose\_random}, disminuyendo de esta manera la cantidad de operaciones
+necesarias para realizar los cálculos requeridos.
+
 \subsection{Disminuir el tamaño por celda}
 
-\subsection{Seleccionar nuevas estructuras de datos}
+\subsubsection{Análisis y propuesta}
 
+La mayor parte de las fallas en cache se deben al patrón patológico de acceso a
+memoria que realiza la función \textit{choose\_random}. Al realizar saltos
+entre filas distantes entre si, y teniendo en cuenta que para los parámetros de
+cache que se manejan en el ejercicio propuesto entran muy pocas celdas por
+linea de cache, exiten muchas fallas de cache por conflicto entre lineas
+reemplazadas.
 
-\section{Implementación de optmizaciones}
+Una posible optimización, dedicada exclusivamente a mejorar algo la tasa de
+fallas de cache, es disminuir el tamaño de la estructura de datos almacenada en
+cada celda de la matriz, de manera de aumentar la cantidad de celdas que entran
+en cada linea de cache. Es posible disminuir a la mitad el tamaño eligiendo los
+tipos de datos adecuados.
+
+\subsection{Separación de datos por estrategia de acceso a memoria}
+
+\subsubsection{Análisis y propuesta}
+
+Existen dos estrategias de acceso a memoria diferentes al mapa de animales según el tipo de información que se quiera extraer del mismo:
+
+\begin{description}
+
+    \item[Tipo de animal] El tipo de animal alojado en una celda se utiliza
+        principalmente en la función \textit{choose\_random}. Esta función
+        tiene una estrategia de acceso a memoria patológica, en donde se buscan
+        las celdas contiguas en la matriz para cada celda. Esto implica accesos
+        consecutivos a filas diferentes y distantes en memoria.
+
+    \item[Parámetros del animal] Los parámetros del animal se utilizan en la
+        decisión del comportamiento del mismo de acuerdo a las reglas definidas
+        para la evolución del ecosistema. El acceso a memoria para estos datos
+        es primordialmente secuencial, a diferencia del caso anterior, y
+        aprovecha algo mejor la estructura contigua de los datos en las lineas
+        de cache.
+
+\end{description}
+
+En función de este análisis, se detecta la posibilidad de separar estos datos
+en dos estructuras paralelas. La primera consiste en una estructura muy
+compacta con la información del tipo de animal alojado en cada celda
+únicamente. Por el patrón de acceso a esta información, el objetivo es que en
+cada linea de cache entre la mayor cantidad posible de este tipo de dato.
+
+Por otro lado, la información sobre los parámetros del animal, al ser accedida
+secuencialmente, puede mantenerse en una estructura similar a la
+utilizada actualmente.
+
+Si bien esto aumenta la complejidad (particularmente, la actualización de dos
+estructuras de datos en vez de una y el mapeo de direcciones entre una y otra)
+y con esto la cantidad de operaciones a ejecutar, se espera una mejora
+apreciable en la tasa de fallas en cache.
 
 \section{Conclusiones}
 
