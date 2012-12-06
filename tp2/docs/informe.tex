@@ -205,7 +205,7 @@ cantidad de operaciones a realizar.
 
 Los resultados fueron bastante buenos para la simplicidad del cambio realizado.
 Se obtuvo un tiempo de ejecución promedio de 70 milisegundos, con un speed up
-de \(1.07\). Además el miss rate bajó de 30\% a 26\%.
+de \(1.07\). Además el miss rate bajó de 30\% a 27\%.
 
 \subsection{Actualizar flag de proceso en una única iteración}
 
@@ -232,6 +232,16 @@ Por otro lado, dado que el valor del flag es leido inicialmente para evitar
 reprocesar, es muy posible que este valor ya esté en la cache al momento de
 hacer la escritura, por lo que la ganancia real de performance puede ser muy
 acotada.
+
+\subsubsection{Implementación}
+
+\lstinputlisting{opt/02todo.diff}
+
+\subsection{Resultados obtenidos}
+
+Como se había previsto, se obtuvo una mejora marginal de performance, con 68
+milisegundos de ejecución representando un speed up de \(1.02\). El miss rate,
+por otro lado, se mantuvo contante.
 
 \subsection{Recálculo de ubicaciones en interface de \textit{choose\_random}}
 

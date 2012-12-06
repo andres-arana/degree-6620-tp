@@ -1,0 +1,56 @@
+diff --git a/tp2/source/wator.c b/tp2/source/wator.c
+index b340b75..69870e4 100644
+--- a/tp2/source/wator.c
++++ b/tp2/source/wator.c
+@@ -73,7 +73,7 @@ void new_animal (int i, int j, char kind)
+   t->kind = kind;
+   t->age = 0;
+   t->hunger = 0;
+-  t->todo = 0;
++  t->todo = 1;
+   newcount++;
+ }
+ 
+@@ -122,6 +122,9 @@ int move_to_fish (int i, int j)
+   memcpy  (&wator[npi][npj], t,sizeof(animal));
+   wator[i][j].kind = EMPTY;
+   wator[npi][npj].hunger = 0;
++  if (npi > i || npj > j) {
++    wator[npi][npj].todo = 0;
++  }
+   if (wator[npi][npj].age >= HBRUT) {
+     wator[i][j].age = 0;
+     new_animal (i, j, SHARK);
+@@ -145,6 +148,9 @@ int move_to_empty (int i, int j)
+   npj = nj (j, dir);
+   assert (wator[npi][npj].kind == EMPTY);
+   memcpy(&wator[npi][npj], t, sizeof(animal));
++  if (npi > i || npj > j) {
++    wator[npi][npj].todo = 0;
++  }
+   wator[i][j].kind = EMPTY;
+   if ((wator[npi][npj].kind == FISH) && (wator[npi][npj].age >= FBRUT)) {
+     wator[npi][npj].age = 0;
+@@ -240,16 +246,12 @@ void moveall ()
+   int i, j;
+   for (i=0; i<MAXI; ++i) {
+     for (j=0; j<MAXJ; ++j) {
+-      if (wator[i][j].kind !=EMPTY) {
+-        wator[i][j].todo = 1;
+-      }
+-    }
+-  }
+-  for (i=0; i<MAXI; ++i) {
+-    for (j=0; j<MAXJ; ++j) {
+-      if ((wator[i][j].kind !=EMPTY) && (wator[i][j].todo)) {
+-        wator[i][j].todo = 0;
+-        move (i, j);
++      if (wator[i][j].kind != EMPTY) {
++        if (wator[i][j].todo) {
++          move (i, j);
++        } else {
++          wator[i][j].todo = 1;
++        }
+       }
+     }
+   }
