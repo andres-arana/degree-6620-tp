@@ -37,7 +37,7 @@ time: clean
 	bash -c "for x in {1..3000}; do time ./build/wator > /dev/null; done" 2> build/perf/time
 	ruby perf/analyze.rb
 
-cachegrind: clean
+cache: clean
 	ACFLAGS="-O3" make
 	valgrind --tool=cachegrind --D1=$(CACHE_SIZE),$(CACHE_WSA),$(CACHE_LINE) ./build/wator > /dev/null
 	rm cachegrind.out.*

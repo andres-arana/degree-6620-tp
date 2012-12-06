@@ -8,6 +8,8 @@ temáticas:
 1. `docs`: Contiene el fuente latex del informe presentado, los gráficos
    insertados en el mismo y todos los documentos adicionales adjuntados al
    informe principal, como el enunciado y la carátula.
+2. `perf`: Contiene scripts para ayudar al análisis estadístico del tiempo de
+   ejecución del programa.
 3. `source`: Contiene el código fuente de la solución desarrollada, en lenguaje
    C y assembly según corresponda.
 
@@ -41,35 +43,27 @@ flags adicionales a la llamada de gcc, como -O4 para aplicar las optimizaciones
 agresivas, etc. Por ejemplo, la linea `ACFLAGS=-O4 make` compila el ejecutable
 con todas las optimizaciones disponibles.
 
-### Administración de máquina virtual
+### Perfilado
 
-Dado que el trabajo práctico requiere la compilación y ejecución de código en
-una arquitectura MIPS corriendo en el emulador gxemul, se incluye tareas de
-administración de dicha máquina virtual.
+La tarea `prof` recompila la aplicación con las opciones necesarias para
+realizar un perfilado a través de la herramienta `gprof`. A continuación,
+realiza el perfilado ejecutando el sistema una vez, y presenta los resultados
+del análisis por pantalla.
 
-La tarea `virtual-start` agrega una IP de loopback (172.20.0.1) al host,
-expande el archivo comprimido que contiene la virtual si no se expandió
-previamente y ejecuta la imagen de la virtual en el emulador. La máquina
-virtual tiene como usuario `root` y como password `orga6620`. Adicionalmente,
-esta tarea copia al portapapeles el comando utilizado para habilitar el puerto
-`2222` en la máquina host como tunel a través de ssh tunneling. Esto es
-especialmente útil para poder conectarse a la virtual desde la máquina host:
-después de ejecutar `make virtual-start` y loguearse, si se pega en la consola
-el contenido del portapapeles se ejecuta un comando que abre un ssh tunnel en
-el puerto `2222`, para poder conectarse a ese puerto en la máquina host por ssh
+### Tiempo de ejecución bruto
 
-La tarea `virtual-reset` elimina la virtual expandida a través de
-`virtual-start`. La próxima vez que se ejecute `virtual-start`, la máquina
-virtual será expandida nuevamente, de manera de poder contar con una virtual
-limpia cuando sea necesario.
+La tarea `time` recompila la aplicación con todas las optimizaciones posibles
+(`-O3`) y ejecuta la aplicación varias veces, almacenando el tiempo de
+ejecución de cada vez. Posteriormente presenta el promedio de tiempos de
+ejecución de estas corridas.
 
-La tarea `virtual-authkey` registra la public key de ssh del host local en la
-virtual, de manera de permitir ejecutar el resto de las tareas sin ingresar la
-contraseña de root `orga6620` cada vez.
+### Uso de cache
 
-La tarea `virtual-deploy` copia los contenidos del trabajo práctico por
-`scp` al directorio `/root/deploy` de la máquina virtual. Es necesario primero
-habilitar el puerto `2222` por ssh tunneling como se indico previamente.
+La tarea `cache` recompila la aplicación con todas las optimizaciones posibles
+(`-O3`) y ejecuta la aplicación dentro del sandbox de valgrind, en particular
+con la herramienta cachegrind, configurada de acuerdo a los parámetros de
+utilización de cache del enunciado del trabajo práctico. Posteriormente
+presenta un informe sobre el uso de dicho cache por pantalla.
 
 ### Generación de documentación
 
@@ -81,3 +75,5 @@ genera el pdf final en `build/doc/informe.pdf`.
 Se incluye además una tarea `doc-preview`, que regenera el informe y abre el
 visor de documentos evince para poder previsualizar cómo queda el mismo.
 
+Por último, la tarea `doc-spell` realiza una corrección ortográfica sobre el
+informe a través de la herramienta `aspell`.
